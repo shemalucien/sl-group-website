@@ -10,8 +10,8 @@ export default function TechPage() {
   return (
     <main className="flex-1">
       {/* Hero Section */}
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
-        <div className="container px-4 md:px-6">
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-blue-600 to-blue-800 text-white relative">
+        <div className="container px-4 md:px-6 relative z-10">
           <div className="flex flex-col items-center space-y-4 text-center">
             <Link
               href="/portfolio"
@@ -42,6 +42,13 @@ export default function TechPage() {
             </div>
           </div>
         </div>
+        <div className="absolute inset-0 w-full h-full">
+            <img 
+              src="/tech-teamwork.jpg" 
+              alt="Background" 
+              className="w-full h-full object-cover opacity-40"
+            />
+          </div>
       </section>
 
       {/* About Section */}

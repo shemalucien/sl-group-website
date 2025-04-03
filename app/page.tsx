@@ -7,8 +7,8 @@ export default function HomePage() {
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-r from-primary/90 to-primary">
-          <div className="container px-4 md:px-6">
+        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-r from-primary/90 to-primary relative">
+          <div className="container px-4 md:px-6 relative z-10">
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2">
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-white">
@@ -29,6 +29,13 @@ export default function HomePage() {
                 </Link>
               </div>
             </div>
+          </div>
+          <div className="absolute inset-0 w-full h-full">
+            <img 
+              src="/Tech.jpg" 
+              alt="Background" 
+              className="w-full h-full object-cover opacity-40"
+            />
           </div>
         </section>
 
