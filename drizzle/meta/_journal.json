@@ -8,6 +8,13 @@
       "when": 1743410347999,
       "tag": "0000_sloppy_power_man",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1743676067598,
+      "tag": "0001_thin_korath",
+      "breakpoints": true
     }
   ]
 }

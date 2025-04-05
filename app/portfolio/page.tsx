@@ -386,14 +386,16 @@ export default async function PortfolioPage() {
   );
 }
 
+// works well with integration
 // export default async function PortfolioPage() {
 //   const subsidiaries = await getSubsidiaries();
+// const activeSubsidiaries = subsidiaries.filter((sub) => sub.isActive)
 
 //   // Define the order of sections if needed
 //   const sectionOrder = ['tech', 'events', 'properties', 'grooming', 'stationery', 'liquor'];
 
 //   // Sort subsidiaries based on predefined order
-//   const sortedSubsidiaries = [...subsidiaries].sort((a, b) =>
+//   const sortedSubsidiaries = [...activeSubsidiaries].sort((a, b) =>
 //     sectionOrder.indexOf(a.slug) - sectionOrder.indexOf(b.slug)
 //   );
 
@@ -420,7 +422,7 @@ export default async function PortfolioPage() {
 //         const isImageLeft = index % 2 === 0;
 
 //         // Get the icon component based on iconName
-//         const IconComponent = getIconComponent(subsidiary.iconName);
+//         const IconComponent = getIconComponent(subsidiary.iconName || 'Building2');
 
 //         return (
 //           <section
@@ -530,7 +532,7 @@ export default async function PortfolioPage() {
 //   );
 // }
 
-// // Helper function to get the icon component based on iconName
+// //Helper function to get the icon component based on iconName
 // function getIconComponent(iconName: string) {
 //   switch (iconName) {
 //     case 'Building2':
@@ -549,3 +551,95 @@ export default async function PortfolioPage() {
 //       return Building2;
 //   }
 // }
+
+
+// import Link from "next/link"
+// import { Building2, Wine } from "lucide-react"
+// import { Button } from "@/components/ui/button"
+// import { getSubsidiaries } from "@/lib/data"
+
+// export default async function PortfolioPage() {
+//   // Only fetch active subsidiaries
+//   const subsidiaries = await getSubsidiaries()
+//   const activeSubsidiaries = subsidiaries.filter((sub) => sub.isActive)
+
+//   return (
+//     <main className="flex-1">
+//       <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+//         <div className="container px-4 md:px-6">
+//           <div className="flex flex-col items-center justify-center space-y-4 text-center">
+//             <div className="space-y-2">
+//               <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Our Portfolio</h1>
+//               <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
+//                 Discover our specialized subsidiaries, each designed to address unique market needs with cutting-edge
+//                 solutions.
+//               </p>
+//             </div>
+//           </div>
+//         </div>
+//       </section>
+
+//       {activeSubsidiaries.map((subsidiary) => (
+//         <section key={subsidiary.id} className="w-full py-12 md:py-24 lg:py-32" id={subsidiary.slug}>
+//           <div className="container px-4 md:px-6">
+//             <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 items-center">
+//               <div className="space-y-4">
+//                 <div className="inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+//                   {subsidiary.slug === "tech" && <Building2 className="h-6 w-6" />}
+//                   {subsidiary.slug === "liquor" && <Wine className="h-6 w-6" />}
+//                 </div>
+//                 <h2 className="text-3xl font-bold tracking-tighter">{subsidiary.name}</h2>
+//                 <p className="text-xl text-muted-foreground">{subsidiary.tagline}</p>
+//                 <p className="text-muted-foreground">{subsidiary.description}</p>
+//                 <div className="space-y-2">
+//                   <h3 className="font-bold">Specializations:</h3>
+//                   <ul className="space-y-1 text-muted-foreground">
+//                     {subsidiary.services.map((service) => (
+//                       <li key={service.id}>• {service.name}</li>
+//                     ))}
+//                   </ul>
+//                 </div>
+//                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
+//                   <Link href={`/contact?interest=${subsidiary.slug}`}>
+//                     <Button>Get in Touch</Button>
+//                   </Link>
+//                   <Link href={`/portfolio/${subsidiary.slug}`}>
+//                     <Button variant="outline">Learn More</Button>
+//                   </Link>
+//                 </div>
+//               </div>
+//               <div className="rounded-lg bg-muted p-8 h-full">
+//                 <div className="aspect-video rounded-lg bg-gradient-to-r from-primary/20 to-primary/40 flex items-center justify-center">
+//                   {subsidiary.slug === "tech" && <Building2 className="h-24 w-24 text-primary/60" />}
+//                   {subsidiary.slug === "liquor" && <Wine className="h-24 w-24 text-primary/60" />}
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </section>
+//       ))}
+
+//       <section className="w-full py-12 md:py-24 lg:py-32 bg-primary text-primary-foreground">
+//         <div className="container px-4 md:px-6">
+//           <div className="flex flex-col items-center justify-center space-y-4 text-center">
+//             <div className="space-y-2">
+//               <h2 className="text-3xl font-bold tracking-tighter">Join Our Journey</h2>
+//               <p className="mx-auto max-w-[700px] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+//                 Whether you're an entrepreneur seeking technological transformation or a connoisseur looking for premium
+//                 beverages, SL Group invites you to experience our difference.
+//               </p>
+//             </div>
+//             <div className="w-full max-w-sm space-y-2">
+//               <Link href="/contact">
+//                 <Button variant="secondary" className="w-full">
+//                   Contact Us Today
+//                 </Button>
+//               </Link>
+//             </div>
+//           </div>
+//         </div>
+//       </section>
+//     </main>
+//   )
+// }
+
