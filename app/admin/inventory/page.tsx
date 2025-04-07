@@ -25,25 +25,33 @@ export default async function InventoryPage() {
     {
       accessorKey: "price",
       header: "Price",
-      cell: ({ row }) => formatPrice(row.original.price),
+      cell: ({ row }: { row: { original: { price: number } } }) => formatPrice(row.original.price),
     },
     {
       accessorKey: "stock",
       header: "Current Stock",
-      cell: ({ row }) => (
+      cell: ({ row }: { row: { original: { stock: number | null } } }) => (
         <span
           className={`font-medium ${
-            row.original.stock <= 5 ? "text-red-600" : row.original.stock <= 20 ? "text-yellow-600" : "text-green-600"
+            row.original.stock === null
+              ? "text-gray-600"
+              : row.original.stock <= 5
+              ? "text-red-600"
+              : row.original.stock <= 20
+              ? "text-yellow-600"
+              : "text-green-600"
           }`}
         >
-          {row.original.stock}
+          {row.original.stock === null ? "N/A" : row.original.stock}
         </span>
       ),
     },
     {
-      id: "actions",
+      accessorKey: "id",
       header: "Actions",
-      cell: ({ row }) => <UpdateStockButton productId={row.original.id} currentStock={row.original.stock} />,
+      cell: ({ row }: { row: { original: { id: number; stock: number } } }) => (
+        <UpdateStockButton productId={row.original.id} currentStock={row.original.stock} />
+      ),
     },
   ]
 
@@ -66,7 +74,7 @@ export default async function InventoryPage() {
             <p className="text-sm font-medium">Low Stock Items</p>
           </div>
           <div className="text-2xl font-bold text-yellow-600">
-            {inventory.filter((product) => product.stock <= 20 && product.stock > 5).length}
+            {inventory.filter((product) => product.stock !== null && product.stock <= 20 && product.stock > 5).length}
           </div>
         </div>
         <div className="rounded-lg border bg-card p-6 shadow-sm">
@@ -74,12 +82,12 @@ export default async function InventoryPage() {
             <p className="text-sm font-medium">Out of Stock Items</p>
           </div>
           <div className="text-2xl font-bold text-red-600">
-            {inventory.filter((product) => product.stock <= 5).length}
+            {inventory.filter((product) => product.stock !== null && product.stock <= 5).length}
           </div>
         </div>
       </div>
 
-      <DataTable columns={columns} data={inventory} />
+      {/* <DataTable columns={columns} data={inventory} /> */}
     </div>
   )
 }

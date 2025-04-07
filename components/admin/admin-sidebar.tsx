@@ -3,7 +3,21 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Users, ShoppingBag, FileText, Briefcase, Calendar, Settings, LogOut } from "lucide-react"
+import {
+  LayoutDashboard,
+  Users,
+  ShoppingBag,
+  FileText,
+  Briefcase,
+  Calendar,
+  Settings,
+  LogOut,
+  DollarSign,
+  Bell,
+  BarChart,
+  Image,
+  Package,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "@/lib/auth-client"
 
@@ -19,14 +33,29 @@ const sidebarItems = [
     icon: Users,
   },
   {
+    title: "Employees",
+    href: "/admin/employees",
+    icon: Users,
+  },
+  {
     title: "Products",
     href: "/admin/products",
     icon: ShoppingBag,
   },
   {
+    title: "Inventory",
+    href: "/admin/inventory",
+    icon: Package,
+  },
+  {
     title: "Orders",
     href: "/admin/orders",
     icon: ShoppingBag,
+  },
+  {
+    title: "Payments",
+    href: "/admin/payments",
+    icon: DollarSign,
   },
   {
     title: "Blog Posts",
@@ -44,6 +73,26 @@ const sidebarItems = [
     icon: Calendar,
   },
   {
+    title: "Rentals",
+    href: "/admin/rentals",
+    icon: Package,
+  },
+  {
+    title: "Reports",
+    href: "/admin/reports",
+    icon: BarChart,
+  },
+  {
+    title: "Media Library",
+    href: "/admin/media",
+    icon: Image,
+  },
+  {
+    title: "Notifications",
+    href: "/admin/notifications",
+    icon: Bell,
+  },
+  {
     title: "Settings",
     href: "/admin/settings",
     icon: Settings,
@@ -58,7 +107,7 @@ export function AdminSidebar() {
   }
 
   return (
-    <div className="w-64 bg-slate-900 text-white min-h-screen p-4">
+    <div className="w-64 bg-slate-900 text-white min-h-screen p-4 overflow-y-auto">
       <div className="flex items-center justify-center mb-8 pt-4">
         <h1 className="text-xl font-bold">SL Group Admin</h1>
       </div>

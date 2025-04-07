@@ -1,82 +1,7 @@
-// import { relations } from "drizzle-orm"
-// import { integer, pgTable, serial, text, timestamp, varchar, boolean } from "drizzle-orm/pg-core"
-
-// // Subsidiaries table
-// export const subsidiaries = pgTable("subsidiaries", {
-//   id: serial("id").primaryKey(),
-//   name: varchar("name", { length: 100 }).notNull(),
-//   slug: varchar("slug", { length: 100 }).notNull().unique(),
-//   tagline: varchar("tagline", { length: 255 }),
-//   description: text("description"),
-//   iconName: varchar("icon_name", { length: 50 }),
-//   primaryColor: varchar("primary_color", { length: 20 }),
-//   secondaryColor: varchar("secondary_color", { length: 20 }),
-//   createdAt: timestamp("created_at").defaultNow(),
-//   updatedAt: timestamp("updated_at").defaultNow(),
-// })
-
-// // Services table
-// export const services = pgTable("services", {
-//   id: serial("id").primaryKey(),
-//   subsidiaryId: integer("subsidiary_id")
-//     .notNull()
-//     .references(() => subsidiaries.id),
-//   name: varchar("name", { length: 100 }).notNull(),
-//   description: text("description"),
-//   iconName: varchar("icon_name", { length: 50 }),
-//   createdAt: timestamp("created_at").defaultNow(),
-//   updatedAt: timestamp("updated_at").defaultNow(),
-// })
-
-// // Testimonials table
-// export const testimonials = pgTable("testimonials", {
-//   id: serial("id").primaryKey(),
-//   subsidiaryId: integer("subsidiary_id").references(() => subsidiaries.id),
-//   quote: text("quote").notNull(),
-//   author: varchar("author", { length: 100 }).notNull(),
-//   position: varchar("position", { length: 100 }),
-//   rating: integer("rating"),
-//   imageUrl: varchar("image_url", { length: 255 }),
-//   createdAt: timestamp("created_at").defaultNow(),
-//   updatedAt: timestamp("updated_at").defaultNow(),
-// })
-
-// // Contact form submissions
-// export const contactSubmissions = pgTable("contact_submissions", {
-//   id: serial("id").primaryKey(),
-//   name: varchar("name", { length: 100 }).notNull(),
-//   email: varchar("email", { length: 100 }).notNull(),
-//   phone: varchar("phone", { length: 20 }),
-//   company: varchar("company", { length: 100 }),
-//   interest: varchar("interest", { length: 50 }),
-//   message: text("message").notNull(),
-//   createdAt: timestamp("created_at").defaultNow(),
-//   isRead: boolean("is_read").default(false),
-// })
-
-// // Define relations
-// export const subsidiariesRelations = relations(subsidiaries, ({ many }) => ({
-//   services: many(services),
-//   testimonials: many(testimonials),
-// }))
-
-// export const servicesRelations = relations(services, ({ one }) => ({
-//   subsidiary: one(subsidiaries, {
-//     fields: [services.subsidiaryId],
-//     references: [subsidiaries.id],
-//   }),
-// }))
-
-// export const testimonialsRelations = relations(testimonials, ({ one }) => ({
-//   subsidiary: one(subsidiaries, {
-//     fields: [testimonials.subsidiaryId],
-//     references: [subsidiaries.id],
-//   }),
-// }))
-
-
 import { relations } from "drizzle-orm"
-import { integer, pgTable, serial, text, timestamp, varchar, boolean, json, pgEnum } from "drizzle-orm/pg-core"
+import { integer, pgTable, serial, text, timestamp, varchar, boolean, json, pgEnum, PgColumn } from "drizzle-orm/pg-core"
+
+
 
 // Subsidiaries table
 export const subsidiaries = pgTable("subsidiaries", {
@@ -85,13 +10,38 @@ export const subsidiaries = pgTable("subsidiaries", {
   slug: varchar("slug", { length: 100 }).notNull().unique(),
   tagline: varchar("tagline", { length: 255 }),
   description: text("description"),
+  // Add missing fields that are in your seed data
+  mission: text("mission"),
+  objective: text("objective"),
   iconName: varchar("icon_name", { length: 50 }),
   primaryColor: varchar("primary_color", { length: 20 }),
   secondaryColor: varchar("secondary_color", { length: 20 }),
   isActive: boolean("is_active").default(true),
+  parentId: integer("parent_id").references((): PgColumn => subsidiaries.id),
+  logoUrl: varchar("logo_url", { length: 255 }),
+  coverImageUrl: varchar("cover_image_url", { length: 255 }),
+  address: text("address"),
+  phone: varchar("phone", { length: 20 }),
+  email: varchar("email", { length: 100 }),
+  website: varchar("website", { length: 255 }),
+  socialMediaLinks: json("social_media_links"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 })
+
+
+// Add services to subsidiary relations
+export const subsidiaryRelations = relations(subsidiaries, ({ one, many }) => ({
+  parent: one(subsidiaries, {
+    fields: [subsidiaries.parentId],
+    references: [subsidiaries.id],
+    relationName: "parentSubsidiary",
+  }),
+  children: many(subsidiaries, {
+    relationName: "childSubsidiaries",
+  }),
+  services: many(services), // Add this line to connect services
+}));
 
 // Services table
 export const services = pgTable("services", {
@@ -105,6 +55,14 @@ export const services = pgTable("services", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 })
+
+// Add service relations
+export const serviceRelations = relations(services, ({ one }) => ({
+  subsidiary: one(subsidiaries, {
+    fields: [services.subsidiaryId],
+    references: [subsidiaries.id],
+  }),
+}));
 
 // Testimonials table
 export const testimonials = pgTable("testimonials", {
@@ -158,6 +116,24 @@ export const sessions = pgTable("sessions", {
   expiresAt: timestamp("expires_at").notNull(),
 })
 
+// // Blog posts
+// export const blogPosts = pgTable("blog_posts", {
+//   id: serial("id").primaryKey(),
+//   title: varchar("title", { length: 255 }).notNull(),
+//   slug: varchar("slug", { length: 255 }).notNull().unique(),
+//   content: text("content").notNull(),
+//   excerpt: text("excerpt"),
+//   featuredImageUrl: varchar("featured_image_url", { length: 255 }),
+//   authorId: integer("author_id")
+//     .notNull()
+//     .references(() => users.id),
+//   subsidiaryId: integer("subsidiary_id").references(() => subsidiaries.id),
+//   isPublished: boolean("is_published").default(false),
+//   publishedAt: timestamp("published_at"),
+//   createdAt: timestamp("created_at").defaultNow(),
+//   updatedAt: timestamp("updated_at").defaultNow(),
+// })
+
 // Blog posts
 export const blogPosts = pgTable("blog_posts", {
   id: serial("id").primaryKey(),
@@ -165,25 +141,149 @@ export const blogPosts = pgTable("blog_posts", {
   slug: varchar("slug", { length: 255 }).notNull().unique(),
   content: text("content").notNull(),
   excerpt: text("excerpt"),
-  featuredImageUrl: varchar("featured_image_url", { length: 255 }),
+  featured_image: varchar("featured_image", { length: 255 }),
+  metaTitle: varchar("meta_title", { length: 255 }),
+  metaDescription: text("meta_description"),
+  status: varchar("status", { length: 20 }).default("draft").notNull(), // draft, published, archived
+  tags: text("tags"), // Comma-separated tags
+  readingTime: integer("reading_time"), // Estimated reading time in minutes
+  viewCount: integer("view_count").default(0),
+  is_featured: boolean("is_featured").default(false),
+  allowComments: boolean("allow_comments").default(true),
   authorId: integer("author_id")
     .notNull()
     .references(() => users.id),
   subsidiaryId: integer("subsidiary_id").references(() => subsidiaries.id),
-  isPublished: boolean("is_published").default(false),
   publishedAt: timestamp("published_at"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 })
 
+// Blog categories
+export const blogCategories = pgTable("blog_categories", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  slug: varchar("slug", { length: 100 }).notNull().unique(),
+  description: text("description"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+})
+
+// Blog post categories (many-to-many relationship)
+export const blogPostCategories = pgTable("blog_post_categories", {
+  id: serial("id").primaryKey(),
+  postId: integer("post_id")
+    .notNull()
+    .references(() => blogPosts.id, { onDelete: "cascade" }),
+  categoryId: integer("category_id")
+    .notNull()
+    .references(() => blogCategories.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
+})
+
+
+// Blog comments
+export const blogComments = pgTable("blog_comments", {
+  id: serial("id").primaryKey(),
+  postId: integer("post_id")
+    .notNull()
+    .references(() => blogPosts.id, { onDelete: "cascade" }),
+  userId: integer("user_id")
+    .references(() => users.id),
+  name: varchar("name", { length: 100 }),
+  email: varchar("email", { length: 255 }),
+  content: text("content").notNull(),
+  isApproved: boolean("is_approved").default(false),
+  parentId: integer("parent_id").references((): PgColumn => blogComments.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+})
+
+// add blog post relations
+// Add blog post relations
+export const blogPostRelations = relations(blogPosts, ({ one, many }) => ({
+  author: one(users, {
+    fields: [blogPosts.authorId],
+    references: [users.id],
+  }),
+  subsidiary: one(subsidiaries, {
+    fields: [blogPosts.subsidiaryId],
+    references: [subsidiaries.id],
+  }),
+  categories: many(blogPostCategories),
+  comments: many(blogComments),
+}));
+
+// Add blog category relations
+export const blogCategoryRelations = relations(blogCategories, ({ many }) => ({
+  posts: many(blogPostCategories, {
+    relationName: "blogCategoryPosts",
+  }),
+}));
+
+// Add blog post category relations (junction table)
+export const blogPostCategoryRelations = relations(blogPostCategories, ({ one }) => ({
+  post: one(blogPosts, {
+    fields: [blogPostCategories.postId],
+    references: [blogPosts.id],
+  }),
+  category: one(blogCategories, {
+    fields: [blogPostCategories.categoryId],
+    references: [blogCategories.id],
+  }),
+}));
+
+// Add blog comment relations
+export const blogCommentRelations = relations(blogComments, ({ one }) => ({
+  post: one(blogPosts, {
+    fields: [blogComments.postId],
+    references: [blogPosts.id],
+  }),
+  user: one(users, {
+    fields: [blogComments.userId],
+    references: [users.id],
+  }),
+  parent: one(blogComments, {
+    fields: [blogComments.parentId],
+    references: [blogComments.id],
+    relationName: "comment_replies",
+  }),
+}));
+
+
+
+
+// // Job listings
+// export const jobListings = pgTable("job_listings", {
+//   id: serial("id").primaryKey(),
+//   title: varchar("title", { length: 255 }).notNull(),
+//   description: text("description").notNull(),
+//   requirements: text("requirements"),
+//   location: varchar("location", { length: 100 }),
+//   type: varchar("type", { length: 50 }), // full-time, part-time, contract
+//   subsidiaryId: integer("subsidiary_id")
+//     .notNull()
+//     .references(() => subsidiaries.id),
+//   isActive: boolean("is_active").default(true),
+//   createdAt: timestamp("created_at").defaultNow(),
+//   updatedAt: timestamp("updated_at").defaultNow(),
+// })
+
 // Job listings
 export const jobListings = pgTable("job_listings", {
   id: serial("id").primaryKey(),
   title: varchar("title", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
   description: text("description").notNull(),
   requirements: text("requirements"),
+  benefits: text("benefits"),
+  department: varchar("department", { length: 100 }),
   location: varchar("location", { length: 100 }),
-  type: varchar("type", { length: 50 }), // full-time, part-time, contract
+  employmentType: varchar("employment_type", { length: 50 }).notNull(), // full_time, part_time, contract, remote
+  status: varchar("status", { length: 20 }).default("open").notNull(), // open, filled, closed
+  applicationDeadline: timestamp("application_deadline"),
+  salary: varchar("salary", { length: 100 }), // e.g. "$50,000 - $70,000" or "Competitive"
+  applicationCount: integer("application_count").default(0),
   subsidiaryId: integer("subsidiary_id")
     .notNull()
     .references(() => subsidiaries.id),
@@ -273,6 +373,106 @@ export const orderItems = pgTable("order_items", {
   price: integer("price").notNull(), // price at time of purchase, in cents
 })
 
+// Employee management
+export const employees = pgTable("employees", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  position: varchar("position", { length: 100 }).notNull(),
+  department: varchar("department", { length: 100 }),
+  hireDate: timestamp("hire_date").defaultNow(),
+  salary: integer("salary"), // stored in cents
+  status: varchar("status", { length: 50 }).default("active"), // active, on_leave, terminated
+  subsidiaryId: integer("subsidiary_id").references(() => subsidiaries.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+})
+
+// Payroll records
+export const payrollRecords = pgTable("payroll_records", {
+  id: serial("id").primaryKey(),
+  employeeId: integer("employee_id").references(() => employees.id),
+  amount: integer("amount").notNull(), // stored in cents
+  type: varchar("type", { length: 50 }).notNull(), // salary, bonus, commission, etc.
+  description: text("description"),
+  paymentDate: timestamp("payment_date").notNull(),
+  status: varchar("status", { length: 50 }).default("pending"), // pending, paid, cancelled
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+})
+
+// Notifications
+export const notifications = pgTable("notifications", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  title: varchar("title", { length: 255 }).notNull(),
+  message: text("message").notNull(),
+  type: varchar("type", { length: 50 }).notNull(), // order, appointment, message, system
+  read: boolean("read").default(false),
+  relatedId: integer("related_id"), // ID of related entity (order, appointment, etc.)
+  relatedType: varchar("related_type", { length: 50 }), // Type of related entity
+  createdAt: timestamp("created_at").defaultNow(),
+})
+
+// Reports
+export const reports = pgTable("reports", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  type: varchar("type", { length: 50 }).notNull(), // sales, inventory, employee, etc.
+  data: json("data").notNull(),
+  createdBy: integer("created_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+})
+
+// Rental items
+export const rentalItems = pgTable("rental_items", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  dailyRate: integer("daily_rate").notNull(), // stored in cents
+  quantity: integer("quantity").default(1),
+  availableQuantity: integer("available_quantity").default(1),
+  category: varchar("category", { length: 100 }),
+  imageUrl: varchar("image_url", { length: 255 }),
+  subsidiaryId: integer("subsidiary_id").references(() => subsidiaries.id),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+})
+
+// Rentals
+export const rentals = pgTable("rentals", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  rentalItemId: integer("rental_item_id").references(() => rentalItems.id),
+  quantity: integer("quantity").default(1),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  totalAmount: integer("total_amount").notNull(), // stored in cents
+  status: varchar("status", { length: 50 }).default("pending"), // pending, active, returned, cancelled
+  paymentStatus: varchar("payment_status", { length: 50 }).default("unpaid"), // unpaid, partial, paid
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+})
+
+// Payments
+export const payments = pgTable("payments", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  amount: integer("amount").notNull(), // stored in cents
+  currency: varchar("currency", { length: 10 }).default("RWF"),
+  method: varchar("method", { length: 50 }).notNull(), // credit_card, momo, cash, etc.
+  status: varchar("status", { length: 50 }).default("pending"), // pending, completed, failed, refunded
+  transactionId: varchar("transaction_id", { length: 255 }),
+  relatedId: integer("related_id"), // ID of related entity (order, rental, etc.)
+  relatedType: varchar("related_type", { length: 50 }), // Type of related entity
+  metadata: json("metadata"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+})
+
 // Define relations
 export const subsidiariesRelations = relations(subsidiaries, ({ many }) => ({
   services: many(services),
@@ -281,6 +481,8 @@ export const subsidiariesRelations = relations(subsidiaries, ({ many }) => ({
   blogPosts: many(blogPosts),
   jobListings: many(jobListings),
   socialMediaPosts: many(socialMediaPosts),
+  employees: many(employees),
+  rentalItems: many(rentalItems),
 }))
 
 export const servicesRelations = relations(services, ({ one }) => ({
@@ -306,6 +508,13 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   blogPosts: many(blogPosts),
   appointments: many(appointments),
   orders: many(orders),
+  employee: one(employees, {
+    fields: [users.id],
+    references: [employees.userId],
+  }),
+  notifications: many(notifications),
+  rentals: many(rentals),
+  payments: many(payments),
 }))
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -371,6 +580,64 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
   product: one(products, {
     fields: [orderItems.productId],
     references: [products.id],
+  }),
+}))
+
+export const employeesRelations = relations(employees, ({ one }) => ({
+  user: one(users, {
+    fields: [employees.userId],
+    references: [users.id],
+  }),
+  subsidiary: one(subsidiaries, {
+    fields: [employees.subsidiaryId],
+    references: [subsidiaries.id],
+  }),
+}))
+
+export const payrollRecordsRelations = relations(payrollRecords, ({ one }) => ({
+  employee: one(employees, {
+    fields: [payrollRecords.employeeId],
+    references: [employees.id],
+  }),
+}))
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(users, {
+    fields: [notifications.userId],
+    references: [users.id],
+  }),
+}))
+
+export const reportsRelations = relations(reports, ({ one }) => ({
+  creator: one(users, {
+    fields: [reports.createdBy],
+    references: [users.id],
+  }),
+}))
+
+export const rentalItemsRelations = relations(rentalItems, ({ one, many }) => ({
+  subsidiary: one(subsidiaries, {
+    fields: [rentalItems.subsidiaryId],
+    references: [subsidiaries.id],
+  }),
+  rentals: many(rentals),
+}))
+
+export const rentalsRelations = relations(rentals, ({ one }) => ({
+  user: one(users, {
+    fields: [rentals.userId],
+    references: [users.id],
+  }),
+  rentalItem: one(rentalItems, {
+    fields: [rentals.rentalItemId],
+    references: [rentalItems.id],
+  }),
+}))
+
+export const paymentsRelations = relations(payments, ({ one }) => ({
+  user: one(users, {
+    fields: [payments.userId],
+    references: [users.id],
   }),
 }))
 

@@ -1,30 +1,3 @@
-// import { auth } from "@clerk/nextjs/server"
-// import { redirect } from "next/navigation"
-
-// export const requireAuth = () => {
-//   const { userId } = auth()
-
-//   if (!userId) {
-//     redirect("/sign-in")
-//   }
-
-//   return userId
-// }
-
-// export const requireAdmin = async () => {
-//   const { userId } = auth()
-
-//   if (!userId) {
-//     redirect("/sign-in")
-//   }
-
-//   // Here you would typically check if the user has admin privileges
-//   // For now, we'll just return the userId
-//   // In a real application, you might want to check against a database or Clerk metadata
-
-//   return userId
-// }
-
 import { db } from "@/db"
 import { sessions, users } from "@/db/schema"
 import { eq } from "drizzle-orm"
@@ -32,6 +5,7 @@ import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { v4 as uuidv4 } from "uuid"
 import bcrypt from "bcryptjs"
+import { encryptSession, decryptSession } from "@/lib/session-encryption"
 
 export type User = {
   id: number
@@ -44,12 +18,21 @@ export type User = {
 
 export async function getSession() {
   const cookieStore = await cookies()
-  const sessionId = cookieStore.get("session_id")?.value
+  const encryptedToken = cookieStore.get("session_token")?.value
 
-  if (!sessionId) {
+  if (!encryptedToken) {
     return null
   }
 
+  // Decrypt the session token
+  const decrypted = await decryptSession(encryptedToken)
+  if (!decrypted || !decrypted.sessionId) {
+    return null
+  }
+
+  const sessionId = decrypted.sessionId as string
+
+  // Get the session from database using decrypted session ID
   const session = await db.query.sessions.findFirst({
     where: eq(sessions.id, sessionId),
     with: {
@@ -64,7 +47,8 @@ export async function getSession() {
   // Check if session is expired
   if (new Date(session.expiresAt) < new Date()) {
     await db.delete(sessions).where(eq(sessions.id, sessionId))
-    cookieStore.set("session_id", "", { expires: new Date(0), path: "/" })
+    const newCookieStore = await cookies()
+    newCookieStore.delete("session_token")
     return null
   }
 
@@ -73,13 +57,6 @@ export async function getSession() {
 
 export async function getCurrentUser(): Promise<User | null> {
   const session = await getSession()
-  const cookieStore = await cookies()
-  const sessionId = cookieStore.get("session_id")?.value
-  console.log("Session ID:", sessionId)
-  if (!sessionId) {
-    return null
-  }
-  
   if (!session) {
     return null
   }
@@ -120,9 +97,18 @@ export async function signIn(email: string, password: string) {
     expiresAt,
   })
 
-  // Set the session cookie
+  // Create encrypted session token
+  const encryptedToken = await encryptSession({
+    sessionId,
+    userId: user.id,
+    role: user.role,
+    expiresAt: expiresAt.toISOString()
+  })
+
   const cookieStore = await cookies()
-  cookieStore.set("session_id", sessionId, {
+  cookieStore.set({
+    name: "session_token",
+    value: encryptedToken,
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -169,9 +155,18 @@ export async function signUp(email: string, password: string, firstName: string,
     expiresAt,
   })
 
-  // Set the session cookie
-  const cookieStore = await cookies();
-  cookieStore.set("session_id", sessionId, {
+  // Create encrypted session token
+  const encryptedToken = await encryptSession({
+    sessionId,
+    userId: user.id,
+    role: user.role,
+    expiresAt: expiresAt.toISOString()
+  })
+
+  const cookieStore = await cookies()
+  cookieStore.set({
+    name: "session_token",
+    value: encryptedToken,
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -184,24 +179,30 @@ export async function signUp(email: string, password: string, firstName: string,
 
 export async function signOut() {
   const cookieStore = await cookies()
-  const sessionId = cookieStore.get("session_id")?.value
+  const encryptedToken = cookieStore.get("session_token")?.value
 
-  if (sessionId) {
-    await db.delete(sessions).where(eq(sessions.id, sessionId))
+  if (encryptedToken) {
+    // Decrypt to get the session ID
+    const decrypted = await decryptSession(encryptedToken)
+    if (decrypted && decrypted.sessionId) {
+      // Delete from database
+      await db.delete(sessions).where(eq(sessions.id, decrypted.sessionId as string))
+    }
   }
 
-  cookieStore.delete("session_id")
+  // Remove the cookie regardless
+  const newCookieStore = await cookies()
+  newCookieStore.delete("session_token")
 }
 
 export async function requireAuth() {
-  const cookieStore = await cookies()
-  const sessionId = cookieStore.get("session_id")?.value
-
-  if (!sessionId) {
+  const session = await getSession()
+  
+  if (!session) {
     redirect("/auth/login")
   }
 
-  return sessionId
+  return session
 }
 
 export async function requireAdmin() {
@@ -212,6 +213,34 @@ export async function requireAdmin() {
   }
 
   if (user.role !== "admin") {
+    redirect("/unauthorized")
+  }
+
+  return user
+}
+
+export async function requireSubsidiaryAdmin() {
+  const user = await getCurrentUser()
+
+  if (!user) {
+    redirect("/auth/login")
+  }
+
+  if (user.role !== "subsidiary_admin" && user.role !== "admin") {
+    redirect("/unauthorized")
+  }
+
+  return user
+}
+
+export async function requireStaff() {
+  const user = await getCurrentUser()
+
+  if (!user) {
+    redirect("/auth/login")
+  }
+
+  if (user.role !== "staff" && user.role !== "subsidiary_admin" && user.role !== "admin") {
     redirect("/unauthorized")
   }
 
@@ -237,4 +266,3 @@ export async function requireSubsidiaryAccess(subsidiaryId: number) {
 
   redirect("/unauthorized")
 }
-

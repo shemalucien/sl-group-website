@@ -270,9 +270,11 @@ import { JobListingCard } from "@/components/job-listing-card";
 export default async function HomePage() {
   // Only fetch active subsidiaries
   const subsidiaries = await getSubsidiaries();
+  console.log("subsidiaries", subsidiaries);
   const activeSubsidiaries = subsidiaries.filter(
-    (sub) => sub.isActive && (sub.slug === "tech" || sub.slug === "liquor")
+    (sub) => sub.isActive && (sub.slug === "tech" || sub.slug === "liquor" || sub.slug === "tech-solutions")
   );
+  console.log("activeSubsidiaries", activeSubsidiaries);
 
   return (
     <div className="flex flex-col min-h-screen">

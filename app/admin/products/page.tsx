@@ -71,7 +71,7 @@ export default async function ProductsPage() {
         </Link>
       </div>
 
-      <DataTable columns={columns} data={allProducts} />
+      {/* <DataTable columns={columns} data={allProducts} /> */}
     </div>
   )
 }

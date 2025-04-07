@@ -15,6 +15,41 @@
       "when": 1743676067598,
       "tag": "0001_thin_korath",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1743880266144,
+      "tag": "0002_deep_randall_flagg",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1744008063660,
+      "tag": "0003_smiling_post",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1744009054984,
+      "tag": "0004_aspiring_baron_zemo",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1744015367607,
+      "tag": "0005_reflective_lorna_dane",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1744020076284,
+      "tag": "0006_shiny_medusa",
+      "breakpoints": true
     }
   ]
 }

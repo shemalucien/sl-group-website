@@ -1,163 +1,4 @@
-// import { db } from "@/db"
-// import { subsidiaries, services, testimonials } from "@/db/schema"
-
-// async function seed() {
-//   console.log("Seeding database...")
-
-//   try {
-//     // Clear existing data
-//     await db.delete(testimonials)
-//     await db.delete(services)
-//     await db.delete(subsidiaries)
-
-//     // Insert subsidiaries
-//     const [techSubsidiary] = await db
-//       .insert(subsidiaries)
-//       .values({
-//         name: "SL Tech Innovators",
-//         slug: "tech",
-//         tagline: "Empowering Businesses with Smart IT Solutions",
-//         description:
-//           "SL Tech Innovators delivers comprehensive technology services designed to transform business operations and drive digital excellence.",
-//         iconName: "Building2",
-//         primaryColor: "blue-600",
-//         secondaryColor: "blue-800",
-//       })
-//       .returning()
-
-//     const [eventsSubsidiary] = await db
-//       .insert(subsidiaries)
-//       .values({
-//         name: "SL Elite Events",
-//         slug: "events",
-//         tagline: "Creating Unforgettable Moments, One Event at a Time",
-//         description:
-//           "SL Elite Events specializes in crafting exceptional experiences through meticulous planning and creative execution.",
-//         iconName: "Calendar",
-//         primaryColor: "pink-600",
-//         secondaryColor: "purple-700",
-//       })
-//       .returning()
-
-//     const [propertiesSubsidiary] = await db
-//       .insert(subsidiaries)
-//       .values({
-//         name: "SL Prime Properties",
-//         slug: "properties",
-//         tagline: "Your Gateway to Premium Living and Event Spaces",
-//         description: "SL Prime Properties offers an exclusive portfolio of luxury real estate solutions.",
-//         iconName: "Home",
-//         primaryColor: "amber-600",
-//         secondaryColor: "amber-800",
-//       })
-//       .returning()
-
-//     const [groomingSubsidiary] = await db
-//       .insert(subsidiaries)
-//       .values({
-//         name: "SL Grooming Studio",
-//         slug: "grooming",
-//         tagline: "Where Style Meets Precision",
-//         description: "SL Grooming Studio elevates the traditional salon experience through exceptional service.",
-//         iconName: "Scissors",
-//         primaryColor: "teal-600",
-//         secondaryColor: "teal-800",
-//       })
-//       .returning()
-
-//     const [stationerySubsidiary] = await db
-//       .insert(subsidiaries)
-//       .values({
-//         name: "SL Stationery Hub",
-//         slug: "stationery",
-//         tagline: "Your Partner in Creativity and Productivity",
-//         description: "SL Stationery Hub provides premium writing instruments, paper products, and printing services.",
-//         iconName: "PenTool",
-//         primaryColor: "indigo-600",
-//         secondaryColor: "purple-600",
-//       })
-//       .returning()
-
-//     const [liquorSubsidiary] = await db
-//       .insert(subsidiaries)
-//       .values({
-//         name: "SL Liquor & Market",
-//         slug: "liquor",
-//         tagline: "Premium Convenience at Your Fingertips",
-//         description:
-//           "SL Liquor & Market brings together the best of both worlds - a carefully curated liquor selection alongside daily grocery essentials.",
-//         iconName: "Wine",
-//         primaryColor: "red-900",
-//         secondaryColor: "red-700",
-//       })
-//       .returning()
-
-//     // Insert services for Tech subsidiary
-//     await db.insert(services).values([
-//       {
-//         subsidiaryId: techSubsidiary.id,
-//         name: "Custom Software Development",
-//         description: "We design and develop custom software solutions tailored to your specific business needs.",
-//         iconName: "Code",
-//       },
-//       {
-//         subsidiaryId: techSubsidiary.id,
-//         name: "IT Support",
-//         description: "Our comprehensive IT support services ensure your systems run smoothly.",
-//         iconName: "Laptop",
-//       },
-//       {
-//         subsidiaryId: techSubsidiary.id,
-//         name: "Cybersecurity",
-//         description: "Protect your business from cyber threats with our comprehensive security solutions.",
-//         iconName: "ShieldCheck",
-//       },
-//     ])
-
-//     // Insert testimonials
-//     await db.insert(testimonials).values([
-//       {
-//         subsidiaryId: techSubsidiary.id,
-//         quote:
-//           "SL Tech Innovators transformed our business with their custom software solution. Our productivity has increased by 35% since implementation.",
-//         author: "Sarah Johnson",
-//         position: "CTO, Global Retail Inc.",
-//         rating: 5,
-//       },
-//       {
-//         subsidiaryId: eventsSubsidiary.id,
-//         quote:
-//           "SL Elite Events made our wedding day absolutely perfect. Their attention to detail and creative vision exceeded our expectations.",
-//         author: "Emily & James",
-//         position: "Wedding Clients",
-//         rating: 5,
-//       },
-//       {
-//         subsidiaryId: liquorSubsidiary.id,
-//         quote:
-//           "The wine selection is exceptional, and the staff is incredibly knowledgeable. They helped me select the perfect wine for a special dinner party.",
-//         author: "Michael Chen",
-//         position: "Regular Customer",
-//         rating: 5,
-//       },
-//     ])
-
-//     console.log("Database seeded successfully!")
-//   } catch (error) {
-//     console.error("Error seeding database:", error)
-//     process.exit(1)
-//   }
-// }
-
-// seed()
-//   .then(() => process.exit(0))
-//   .catch((error) => {
-//     console.error("Seed script failed:", error)
-//     process.exit(1)
-//   })
-
-
-import { db } from "@/db"
+import { db } from "@/db";
 import {
   subsidiaries,
   services,
@@ -167,45 +8,222 @@ import {
   blogPosts,
   jobListings,
   socialMediaPosts,
-} from "@/db/schema"
-import bcrypt from "bcryptjs"
+  blogPostCategories,
+  blogComments,
+  blogCategories,
+} from "@/db/schema";
+import bcrypt from "bcryptjs";
 
 async function seed() {
-  console.log("Seeding database...")
+  console.log("Seeding database...");
 
   try {
     // Clear existing data
-    await db.delete(socialMediaPosts)
-    await db.delete(jobListings)
-    await db.delete(blogPosts)
-    await db.delete(products)
-    await db.delete(testimonials)
-    await db.delete(services)
-    await db.delete(users)
-    await db.delete(subsidiaries)
+    await db.delete(socialMediaPosts);
+    await db.delete(jobListings);
+    await db.delete(blogPosts);
+    await db.delete(products);
+    await db.delete(testimonials);
+    await db.delete(services);
+    await db.delete(users);
+    await db.delete(subsidiaries);
+    await db.delete(blogPostCategories);
+    await db.delete(blogComments);
 
-    // Insert subsidiaries - only Tech and Liquor are active
-    const [techSubsidiary] = await db
+    // // Insert subsidiaries - only Tech and Liquor are active
+    // const [techSubsidiary] = await db
+    //   .insert(subsidiaries)
+    //   .values({
+    //     name: "SL Tech Innovators",
+    //     slug: "tech",
+    //     tagline: "Empowering Businesses with Smart IT Solutions",
+    //     description:
+    //       "SL Tech Innovators delivers comprehensive technology services designed to transform business operations and drive digital excellence.",
+    //     iconName: "Building2",
+    //     primaryColor: "blue-600",
+    //     secondaryColor: "blue-800",
+    //     isActive: true,
+    //   })
+    //   .returning();
+
+    // // Add SL Tech Solutions and SL Tech Store
+    // const [techSolutions] = await db
+    //   .insert(subsidiaries)
+    //   .values({
+    //     name: "SL Tech Solutions",
+    //     slug: "tech-solutions",
+    //     tagline: "Quality Technology, Expert Guidance, Complete Solutions",
+    //     description:
+    //       "SL Tech Solutions is your comprehensive technology partner, delivering a premium retail and service experience. We specialize in curated IT hardware, professional consulting, white-glove implementation, and ongoing support—everything you need to power your personal or business technology ecosystem.",
+    //     iconName: "laptop",
+    //     primaryColor: "#3B82F6",
+    //     secondaryColor: "#93C5FD",
+    //     isActive: true,
+    //   })
+    //   .returning();
+
+    // const [techStore] = await db
+    //   .insert(subsidiaries)
+    //   .values({
+    //     name: "SL Tech Store",
+    //     slug: "tech-store",
+    //     tagline: "Your One-Stop IT Solutions Hub",
+    //     description:
+    //       "SL Tech Store delivers a seamless technology retail experience by offering a curated selection of premium hardware backed by expert services. Whether you're a business scaling up or an individual upgrading your setup, we provide the right tools and support to power your productivity.",
+    //     iconName: "monitor",
+    //     primaryColor: "#10B981",
+    //     secondaryColor: "#6EE7B7",
+    //     isActive: true,
+    //   })
+    //   .returning();
+
+    // // Insert services for Tech subsidiary
+    // await db.insert(services).values([
+    //   {
+    //     subsidiaryId: techSubsidiary.id,
+    //     name: "Custom Software Development",
+    //     description:
+    //       "We design and develop custom software solutions tailored to your specific business needs.",
+    //     iconName: "Code",
+    //   },
+    //   {
+    //     subsidiaryId: techSubsidiary.id,
+    //     name: "IT Support",
+    //     description:
+    //       "Our comprehensive IT support services ensure your systems run smoothly.",
+    //     iconName: "Laptop",
+    //   },
+    //   {
+    //     subsidiaryId: techSubsidiary.id,
+    //     name: "Cybersecurity",
+    //     description:
+    //       "Protect your business from cyber threats with our comprehensive security solutions.",
+    //     iconName: "ShieldCheck",
+    //   },
+    // ]);
+    // // Add SL Tech Store services
+    // await db.insert(services).values([
+    //   {
+    //     subsidiaryId: techStore.id,
+    //     name: "Premium Hardware",
+    //     description:
+    //       "Explore our curated selection of high-performance laptops, desktops, and accessories.",
+    //     iconName: "Monitor",
+    //   },
+    //   {
+    //     subsidiaryId: techStore.id,
+    //     name: "Networking Solutions",
+    //     description:
+    //       "Get the best networking gear to keep your business connected.",
+    //     iconName: "Wifi",
+    //   },
+    //   {
+    //     subsidiaryId: techStore.id,
+    //     name: "Installation & Support",
+    //     description:
+    //       "We provide expert installation and ongoing support for all your technology needs.",
+    //     iconName: "Tool",
+    //   },
+    // ]);
+
+    // Insert SL Tech Solutions (parent)
+    const [techSolutions] = await db
+      .insert(subsidiaries)
+      .values({
+        name: "SL Tech Solutions",
+        slug: "tech-solutions",
+        tagline: "Quality Technology, Expert Guidance, Complete Solutions",
+        mission:
+          "To empower businesses, institutions, and individuals by delivering reliable, premium-grade technology solutions paired with expert services—providing a seamless, end-to-end digital experience.",
+        objective:
+          "To deliver a premium retail and service experience through curated IT hardware, expert consulting, and ongoing support.",
+        description:
+          "SL Tech Solutions is your comprehensive technology partner, delivering a premium retail and service experience. We specialize in curated IT hardware, professional consulting, white-glove implementation, and ongoing support—everything you need to power your personal or business technology ecosystem.",
+        iconName: "laptop",
+        primaryColor: "#3B82F6",
+        secondaryColor: "#93C5FD",
+        isActive: true,
+        logoUrl: "/logos/tech-solutions.png",
+        coverImageUrl: "/covers/tech-solutions.jpg",
+        address: "123 Tech Avenue, Silicon Valley, CA",
+        phone: "+1-800-123-4567",
+        email: "info@sltechsolutions.com",
+        website: "https://www.sltechsolutions.com",
+        socialMediaLinks: {
+          facebook: "https://facebook.com/sltechsolutions",
+          twitter: "https://twitter.com/sltechsolutions",
+          linkedin: "https://linkedin.com/company/sltechsolutions",
+        },
+      })
+      .returning();
+
+    // Insert SL Tech Innovators (child)
+    const [techInnovators] = await db
       .insert(subsidiaries)
       .values({
         name: "SL Tech Innovators",
-        slug: "tech",
-        tagline: "Empowering Businesses with Smart IT Solutions. Custom software development, IT support,cybersecurity, and more.",
+        slug: "tech-innovators",
+        tagline: "Empowering Businesses with Smart IT Solutions.",
+        mission:
+          "To help businesses streamline operations, enhance productivity, and achieve their goals through innovative technology.",
+        objective:
+          "Deliver smart IT solutions for digital transformation and business growth.",
         description:
-          "SL Tech Innovators delivers comprehensive technology services designed to transform business operations and drive digital excellence.",
+          "SL Tech Innovators delivers comprehensive technology services designed to transform business operations and drive digital excellence. Our team of experts provides tailored solutions that enable organizations to thrive in an increasingly digital landscape.",
         iconName: "Building2",
         primaryColor: "blue-600",
         secondaryColor: "blue-800",
         isActive: true,
+        parentId: techSolutions.id,
+        logoUrl: "/logos/tech-innovators.png",
+        coverImageUrl: "/covers/tech-innovators.jpg",
+        address: "456 Innovation Drive, Silicon Valley, CA",
+        phone: "+1-800-456-7890",
+        email: "contact@sltechinnovators.com",
+        website: "https://www.sltechinnovators.com",
+        socialMediaLinks: {
+          linkedin: "https://linkedin.com/company/sltechinnovators",
+        },
       })
-      .returning()
+      .returning();
+
+    // Insert SL Tech Store (child)
+    const [techStore] = await db
+      .insert(subsidiaries)
+      .values({
+        name: "SL Tech Store",
+        slug: "tech-store",
+        tagline: "Your One-Stop IT Solutions Hub.",
+        mission:
+          "To be the go-to provider of high-quality, reliable IT equipment and support for businesses, institutions, and individuals seeking end-to-end hardware solutions.",
+        objective:
+          "Provide seamless retail experiences and expert-backed hardware solutions for every type of user.",
+        description:
+          "SL Tech Store delivers a seamless technology retail experience by offering a curated selection of premium hardware backed by expert services. Whether you’re a business scaling up or an individual upgrading your setup, we provide the right tools and support to power your productivity.",
+        iconName: "monitor",
+        primaryColor: "#10B981",
+        secondaryColor: "#6EE7B7",
+        isActive: true,
+        parentId: techSolutions.id,
+        logoUrl: "/logos/tech-store.png",
+        coverImageUrl: "/covers/tech-store.jpg",
+        address: "789 Retail Lane, Silicon Valley, CA",
+        phone: "+1-800-987-6543",
+        email: "support@sltechstore.com",
+        website: "https://www.sltechstore.com",
+        socialMediaLinks: {
+          instagram: "https://instagram.com/sltechstore",
+          facebook: "https://facebook.com/sltechstore",
+        },
+      })
+      .returning();
 
     const [eventsSubsidiary] = await db
       .insert(subsidiaries)
       .values({
         name: "SL Elite Events",
         slug: "events",
-        tagline: "Creating Unforgettable Moments, One Event at a Time. Wedding planning, corporate events, themed parties, and more.",
+        tagline: "Creating Unforgettable Moments, One Event at a Time",
         description:
           "SL Elite Events specializes in crafting exceptional experiences through meticulous planning and creative execution.",
         iconName: "Calendar",
@@ -213,56 +231,59 @@ async function seed() {
         secondaryColor: "purple-700",
         isActive: false, // Inactive
       })
-      .returning()
+      .returning();
 
     const [propertiesSubsidiary] = await db
       .insert(subsidiaries)
       .values({
         name: "SL Prime Properties",
         slug: "properties",
-        tagline: "Your Gateway to Premium Living and Event Spaces. Luxury apartments, event venues, and property management.",
-        description: "SL Prime Properties offers an exclusive portfolio of luxury real estate solutions.",
+        tagline: "Your Gateway to Premium Living and Event Spaces",
+        description:
+          "SL Prime Properties offers an exclusive portfolio of luxury real estate solutions.",
         iconName: "Home",
         primaryColor: "amber-600",
         secondaryColor: "amber-800",
         isActive: false, // Inactive
       })
-      .returning()
+      .returning();
 
     const [groomingSubsidiary] = await db
       .insert(subsidiaries)
       .values({
         name: "SL Grooming Studio",
         slug: "grooming",
-        tagline: "Where Style Meets Precision. Premium salon offering haircuts, grooming, and styling services for all genders.",
-        description: "SL Grooming Studio elevates the traditional salon experience through exceptional service.",
+        tagline: "Where Style Meets Precision",
+        description:
+          "SL Grooming Studio elevates the traditional salon experience through exceptional service.",
         iconName: "Scissors",
         primaryColor: "teal-600",
         secondaryColor: "teal-800",
         isActive: false, // Inactive
       })
-      .returning()
+      .returning();
 
     const [stationerySubsidiary] = await db
       .insert(subsidiaries)
       .values({
         name: "SL Stationery Hub",
         slug: "stationery",
-        tagline: "Your Partner in Creativity and Productivity. High-quality office supplies, art materials, and custom printing services.",
-        description: "SL Stationery Hub provides premium writing instruments, paper products, and printing services.",
+        tagline: "Your Partner in Creativity and Productivity",
+        description:
+          "SL Stationery Hub provides premium writing instruments, paper products, and printing services.",
         iconName: "PenTool",
         primaryColor: "indigo-600",
         secondaryColor: "purple-600",
         isActive: false, // Inactive
       })
-      .returning()
+      .returning();
 
     const [liquorSubsidiary] = await db
       .insert(subsidiaries)
       .values({
         name: "SL Liquor & Market",
         slug: "liquor",
-        tagline: "Premium Convenience at Your Fingertips. Curated selection of fine wines, craft beers, spirits, and gourmet groceries.",
+        tagline: "Premium Convenience at Your Fingertips",
         description:
           "SL Liquor & Market brings together the best of both worlds - a carefully curated liquor selection alongside daily grocery essentials.",
         iconName: "Wine",
@@ -270,29 +291,7 @@ async function seed() {
         secondaryColor: "red-700",
         isActive: true,
       })
-      .returning()
-
-    // Insert services for Tech subsidiary
-    await db.insert(services).values([
-      {
-        subsidiaryId: techSubsidiary.id,
-        name: "Custom Software Development",
-        description: "We design and develop custom software solutions tailored to your specific business needs.",
-        iconName: "Code",
-      },
-      {
-        subsidiaryId: techSubsidiary.id,
-        name: "IT Support",
-        description: "Our comprehensive IT support services ensure your systems run smoothly.",
-        iconName: "Laptop",
-      },
-      {
-        subsidiaryId: techSubsidiary.id,
-        name: "Cybersecurity",
-        description: "Protect your business from cyber threats with our comprehensive security solutions.",
-        iconName: "ShieldCheck",
-      },
-    ])
+      .returning();
 
     // Insert services for Liquor subsidiary
     await db.insert(services).values([
@@ -313,15 +312,123 @@ async function seed() {
       {
         subsidiaryId: liquorSubsidiary.id,
         name: "Delivery Services",
-        description: "Enjoy the convenience of home delivery and subscription services for your favorite products.",
+        description:
+          "Enjoy the convenience of home delivery and subscription services for your favorite products.",
         iconName: "Truck",
       },
-    ])
+    ]);
+
+    await db.insert(services).values([
+      {
+        subsidiaryId: techInnovators.id,
+        name: "Custom Software Development",
+        description:
+          "Tailored software solutions designed to meet your unique business requirements, from web platforms to enterprise systems.",
+        iconName: "Code",
+      },
+      {
+        subsidiaryId: techInnovators.id,
+        name: "Enterprise IT Support",
+        description:
+          "Comprehensive technical support and IT management services to keep your business running smoothly.",
+        iconName: "Laptop2",
+      },
+      {
+        subsidiaryId: techInnovators.id,
+        name: "Advanced Cybersecurity Solutions",
+        description:
+          "End-to-end security assessments, penetration testing, and compliance-focused protection plans.",
+        iconName: "ShieldCheck",
+      },
+      {
+        subsidiaryId: techInnovators.id,
+        name: "Cloud Infrastructure & Migration",
+        description:
+          "Cloud strategy, implementation, and migration services to modernize and optimize your business operations.",
+        iconName: "CloudUpload",
+      },
+      {
+        subsidiaryId: techInnovators.id,
+        name: "Technical Training & Development",
+        description:
+          "Upskilling programs, workshops, and certifications to equip your team with cutting-edge technical knowledge.",
+        iconName: "GraduationCap",
+      },
+    ]);
+
+    await db.insert(services).values([
+      {
+        subsidiaryId: techStore.id,
+        name: "Premium IT Hardware Sales",
+        description:
+          "A wide range of high-performance laptops, desktops, and workstations for professionals and businesses.",
+        iconName: "Monitor",
+      },
+      {
+        subsidiaryId: techStore.id,
+        name: "Office & Networking Equipment",
+        description:
+          "Printers, routers, projectors, and all-in-one devices to fully equip your office environment.",
+        iconName: "Router",
+      },
+      {
+        subsidiaryId: techStore.id,
+        name: "Installation & Setup Services",
+        description:
+          "On-site installation, configuration, and system integration for all hardware purchases.",
+        iconName: "Tool",
+      },
+      {
+        subsidiaryId: techStore.id,
+        name: "Equipment Leasing & Procurement",
+        description:
+          "Flexible leasing options and procurement services for institutions and enterprise clients.",
+        iconName: "PackageCheck",
+      },
+      {
+        subsidiaryId: techStore.id,
+        name: "E-Waste Recycling & Data Migration",
+        description:
+          "Safe disposal of old equipment and secure data migration from legacy systems.",
+        iconName: "Recycle",
+      },
+    ]);
+
+    await db.insert(services).values([
+      {
+        subsidiaryId: techSolutions.id,
+        name: "Technology Consulting & Advisory",
+        description:
+          "End-to-end digital strategy and technology consulting for organizations seeking transformation and growth.",
+        iconName: "Lightbulb",
+      },
+      {
+        subsidiaryId: techSolutions.id,
+        name: "Managed IT Solutions",
+        description:
+          "Fully-managed services combining infrastructure, support, security, and updates into a single package.",
+        iconName: "ServerCog",
+      },
+      {
+        subsidiaryId: techSolutions.id,
+        name: "End-to-End Tech Ecosystem Packages",
+        description:
+          "Comprehensive technology bundles that include both hardware and IT services tailored for specific industries.",
+        iconName: "Box",
+      },
+      {
+        subsidiaryId: techSolutions.id,
+        name: "Tech Audits & Optimization",
+        description:
+          "Business-wide assessments and actionable plans for optimizing performance, cost, and security.",
+        iconName: "ClipboardList",
+      },
+    ]);
 
     // Insert testimonials
     await db.insert(testimonials).values([
       {
-        subsidiaryId: techSubsidiary.id,
+        subsidiaryId: techInnovators.id,
         quote:
           "SL Tech Innovators transformed our business with their custom software solution. Our productivity has increased by 35% since implementation.",
         author: "Sarah Johnson",
@@ -336,20 +443,20 @@ async function seed() {
         position: "Regular Customer",
         rating: 5,
       },
-    ])
+    ]);
 
     // Create admin user
-    const adminPasswordHash = await bcrypt.hash("admin123", 10)
+    const adminPasswordHash = await bcrypt.hash("admin123", 10);
     await db.insert(users).values({
       email: "admin@slgroup.com",
       passwordHash: adminPasswordHash,
       firstName: "Admin",
       lastName: "User",
       role: "admin",
-    })
+    });
 
     // Create subsidiary admin users
-    const userPasswordHash = await bcrypt.hash("password123", 10)
+    const userPasswordHash = await bcrypt.hash("password123", 10);
     await db.insert(users).values([
       {
         email: "tech@slgroup.com",
@@ -357,7 +464,7 @@ async function seed() {
         firstName: "Tech",
         lastName: "Admin",
         role: "subsidiary_admin",
-        subsidiaryId: techSubsidiary.id,
+        subsidiaryId: techInnovators.id,
       },
       {
         email: "liquor@slgroup.com",
@@ -367,7 +474,7 @@ async function seed() {
         role: "subsidiary_admin",
         subsidiaryId: liquorSubsidiary.id,
       },
-    ])
+    ]);
 
     // Create customer user
     await db.insert(users).values({
@@ -376,13 +483,14 @@ async function seed() {
       firstName: "John",
       lastName: "Customer",
       role: "customer",
-    })
+    });
 
     // Insert products for Liquor & Market
     await db.insert(products).values([
       {
         name: "Château Grand Reserve",
-        description: "2018 Bordeaux Blend, France. A premium red wine with notes of black currant, cedar, and tobacco.",
+        description:
+          "2018 Bordeaux Blend, France. A premium red wine with notes of black currant, cedar, and tobacco.",
         price: 8999, // $89.99
         category: "wine",
         stock: 24,
@@ -390,7 +498,8 @@ async function seed() {
       },
       {
         name: "Highland Single Malt",
-        description: "18-Year Aged Whiskey, Scotland. Smooth with hints of honey, oak, and a gentle smoky finish.",
+        description:
+          "18-Year Aged Whiskey, Scotland. Smooth with hints of honey, oak, and a gentle smoky finish.",
         price: 12999, // $129.99
         category: "spirits",
         stock: 15,
@@ -398,61 +507,254 @@ async function seed() {
       },
       {
         name: "Craft IPA Collection",
-        description: "Set of 6 premium craft IPAs from local breweries. Variety of hoppy flavors and strengths.",
+        description:
+          "Set of 6 premium craft IPAs from local breweries. Variety of hoppy flavors and strengths.",
         price: 1899, // $18.99
         category: "beer",
         stock: 50,
         isActive: true,
       },
-    ])
+    ]);
 
-    // Insert blog posts
-    await db.insert(blogPosts).values([
-      {
-        title: "The Future of Tech Innovation",
-        slug: "future-of-tech-innovation",
-        content:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        excerpt: "Exploring emerging technologies and their impact on business operations.",
-        authorId: 35, // Admin user
-        subsidiaryId: techSubsidiary.id,
-        isPublished: true,
-        publishedAt: new Date(),
-      },
-      {
-        title: "Wine Tasting: A Beginner's Guide",
-        slug: "wine-tasting-beginners-guide",
-        content:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        excerpt: "Learn the basics of wine tasting and how to appreciate different varieties.",
-        authorId: 35, // Admin user
-        subsidiaryId: liquorSubsidiary.id,
-        isPublished: true,
-        publishedAt: new Date(),
-      },
-    ])
+    // // Insert blog posts
+    // await db.insert(blogPosts).values([
+    //   {
+    //     title: "The Future of Tech Innovation",
+    //     slug: "future-of-tech-innovation",
+    //     content:
+    //       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    //     excerpt:
+    //       "Exploring emerging technologies and their impact on business operations.",
+    //     authorId: 54, // Admin user
+    //     subsidiaryId: techInnovators.id,
+    //     isPublished: true,
+    //     publishedAt: new Date(),
+    //   },
+    //   {
+    //     title: "Wine Tasting: A Beginner's Guide",
+    //     slug: "wine-tasting-beginners-guide",
+    //     content:
+    //       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    //     excerpt:
+    //       "Learn the basics of wine tasting and how to areciate different varieties.",
+    //     authorId: 54, // Admin user
+    //     subsidiaryId: liquorSubsidiary.id,
+    //     isPublished: true,
+    //     publishedAt: new Date(),
+    //   },
+    // ]);
 
-    // Insert job listings
+    // Ensure the blog_post_categories table exists
+    await db.execute(`
+  CREATE TABLE IF NOT EXISTS blog_post_categories (
+    id SERIAL PRIMARY KEY,
+    post_id INT NOT NULL,
+    category_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES blog_posts(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES blog_categories(id) ON DELETE CASCADE
+  );
+`);
+
+    // Ensure the user with id 5 exists
+    const user = await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.id, 5),
+    });
+
+    if (!user) {
+      await db.insert(users).values({
+        id: 5,
+        email: "admin@example.com",
+        passwordHash: "hashedpassword", // If using password hash
+        role: "admin", // Modify as per your roles
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+    }
+
+    // Step 1: Fetch category IDs dynamically by category slug
+    const technologyCategory = await db.query.blogCategories.findFirst({
+      where: (blogCategories, { eq }) => eq(blogCategories.slug, "technology"),
+    });
+
+    const wineCategory = await db.query.blogCategories.findFirst({
+      where: (blogCategories, { eq }) => eq(blogCategories.slug, "wine"),
+    });
+
+    if (!technologyCategory) {
+      await db.insert(blogCategories).values({
+        name: "Technology",
+        slug: "technology",
+      });
+    }
+
+    if (!wineCategory) {
+      await db.insert(blogCategories).values({
+        name: "Wine",
+        slug: "wine",
+      });
+    }
+    
+
+    // Check if categories exist before inserting blog post categories
+    if (technologyCategory && wineCategory) {
+      console.log(technologyCategory.id, wineCategory.id);
+      // Step 2: Insert blog posts
+      const [techPost, winePost]= await db
+        .insert(blogPosts)
+        .values([
+          {
+            title: "The Future of Tech Innovation",
+            slug: "future-of-tech-innovation",
+            content:
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            excerpt:
+              "Exploring emerging technologies and their impact on business operations.",
+            featured_image: "/images/future-of-tech.jpg",
+            metaTitle: "The Future of Tech Innovation | SL Tech Innovators",
+            metaDescription:
+              "Explore the emerging technologies and their future impact on business operations.",
+            status: "published", // Set to 'published'
+            tags: "technology, innovation, future",
+            readingTime: 5, // Estimated reading time in minutes
+            viewCount: 100,
+            is_featured: true,
+            allowComments: true,
+            authorId: 5, // Admin user
+            subsidiaryId: techInnovators.id,
+            publishedAt: new Date(),
+          },
+          {
+            title: "Wine Tasting: A Beginner's Guide",
+            slug: "wine-tasting-beginners-guide",
+            content:
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            excerpt:
+              "Learn the basics of wine tasting and how to appreciate different varieties.",
+            featured_image: "/images/wine-tasting.jpg",
+            metaTitle: "Wine Tasting: A Beginner's Guide | SL Liquor & Market",
+            metaDescription:
+              "A beginner's guide to wine tasting, learning about varieties and tasting techniques.",
+            status: "published",
+            tags: "wine, tasting, guide",
+            readingTime: 3,
+            viewCount: 50,
+            is_featured: false,
+            allowComments: true,
+            authorId: 5, // Admin user
+            subsidiaryId: liquorSubsidiary.id,
+            publishedAt: new Date(),
+          },
+        ])
+        .returning();
+          // Pass "id" as an array;    
+      console.log(techPost.id, winePost.id);
+      // Step 3: Insert blog post categories (many-to-many relationship)
+      await db.insert(blogPostCategories).values([
+        {
+          postId: techPost.id, // Post ID for "The Future of Tech Innovation"
+          categoryId: technologyCategory.id, // Dynamically fetched category ID for technology
+        },
+        {
+          postId: winePost.id, // Post ID for "Wine Tasting: A Beginner's Guide"
+          categoryId: wineCategory.id, // Dynamically fetched category ID for wine
+        },
+      ]);
+
+      // Step 4: Insert blog comments (if needed)
+      await db.insert(blogComments).values([
+        {
+          postId: techPost.id, // Post ID for "The Future of Tech Innovation"
+          userId: 5, // Admin user or replace with actual user ID
+          name: "John Doe",
+          email: "john.doe@example.com",
+          content: "Great article! Really excited about the future of tech.",
+          isApproved: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          postId: winePost.id, // Post ID for "Wine Tasting: A Beginner's Guide"
+          userId: 5, // Admin user or replace with actual user ID
+          name: "Jane Smith",
+          email: "jane.smith@example.com",
+          content:
+            "This guide is so helpful! I can't wait to try wine tasting.",
+          isApproved: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ]);
+    } else {
+      // If categories do not exist, log a message or handle it
+      console.log("One or more categories could not be found.");
+    }
+
+    // // Insert job listings
+    // await db.insert(jobListings).values([
+    //   {
+    //     title: "Software Developer",
+    //     description:
+    //       "We're looking for a talented software developer to join our team.",
+    //     requirements:
+    //       "3+ years of experience with React, Node.js, and TypeScript.",
+    //     location: "Remote",
+    //     type: "Full-time",
+    //     subsidiaryId: techInnovators.id,
+    //     isActive: true,
+    //   },
+    //   {
+    //     title: "Sales Associate",
+    //     description:
+    //       "Join our team as a sales associate at SL Liquor & Market.",
+    //     requirements:
+    //       "Previous retail experience and knowledge of wines and spirits.",
+    //     location: "On-site",
+    //     type: "Full-time",
+    //     subsidiaryId: liquorSubsidiary.id,
+    //     isActive: true,
+    //   },
+    // ]);
+
+    // Insert job listings with updated schema
     await db.insert(jobListings).values([
       {
         title: "Software Developer",
-        description: "We're looking for a talented software developer to join our team.",
-        requirements: "3+ years of experience with React, Node.js, and TypeScript.",
+        slug: "software-developer", // Unique slug
+        description:
+          "We're looking for a talented software developer to join our team.",
+        requirements:
+          "3+ years of experience with React, Node.js, and TypeScript.",
+        benefits: "Health insurance, paid time off, 401(k).",
+        department: "Engineering", // Optional department field
         location: "Remote",
-        type: "Full-time",
-        subsidiaryId: techSubsidiary.id,
+        employmentType: "Full-time", // "Full-time", "Part-time", "Contract", "Remote"
+        status: "open", // Could be "open", "filled", or "closed"
+        applicationDeadline: new Date("2025-05-31T23:59:59"), // Optional deadline
+        salary: "$80,000 - $120,000", // Optional salary range
+        applicationCount: 0, // Default to 0
+        subsidiaryId: techInnovators.id,
         isActive: true,
       },
       {
         title: "Sales Associate",
-        description: "Join our team as a sales associate at SL Liquor & Market.",
-        requirements: "Previous retail experience and knowledge of wines and spirits.",
+        slug: "sales-associate", // Unique slug
+        description:
+          "Join our team as a sales associate at SL Liquor & Market.",
+        requirements:
+          "Previous retail experience and knowledge of wines and spirits.",
+        benefits: "Employee discounts, health insurance.",
+        department: "Sales", // Optional department field
         location: "On-site",
-        type: "Full-time",
+        employmentType: "Full-time", // "Full-time", "Part-time", "Contract", "Remote"
+        status: "open", // Could be "open", "filled", or "closed"
+        applicationDeadline: new Date("2025-06-15T23:59:59"), // Optional deadline
+        salary: "Competitive", // Optional salary range
+        applicationCount: 0, // Default to 0
         subsidiaryId: liquorSubsidiary.id,
         isActive: true,
       },
-    ])
+    ]);
 
     // Insert social media posts
     await db.insert(socialMediaPosts).values([
@@ -460,30 +762,30 @@ async function seed() {
         platform: "instagram",
         postUrl: "https://instagram.com/p/example1",
         imageUrl: "/placeholder.svg?height=300&width=300",
-        caption: "Exploring new tech innovations at our R&D center! #SLTech #Innovation",
-        subsidiaryId: techSubsidiary.id,
+        caption:
+          "Exploring new tech innovations at our R&D center! #SLTech #Innovation",
+        subsidiaryId: techInnovators.id,
       },
       {
         platform: "instagram",
         postUrl: "https://instagram.com/p/example2",
         imageUrl: "/placeholder.svg?height=300&width=300",
-        caption: "New wine collection just arrived! Come taste it this weekend. #SLLiquor #WineTasting",
+        caption:
+          "New wine collection just arrived! Come taste it this weekend. #SLLiquor #WineTasting",
         subsidiaryId: liquorSubsidiary.id,
       },
-    ])
+    ]);
 
-    console.log("Database seeded successfully!")
+    console.log("Database seeded successfully!");
   } catch (error) {
-    console.error("Error seeding database:", error)
-    process.exit(1)
+    console.error("Error seeding database:", error);
+    process.exit(1);
   }
 }
 
 seed()
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error("Seed script failed:", error)
-    process.exit(1)
-  })
-
-
+    console.error("Seed script failed:", error);
+    process.exit(1);
+  });

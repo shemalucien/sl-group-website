@@ -1,198 +1,59 @@
-// import { authMiddleware } from "@clerk/nextjs"
-
-// export default authMiddleware({
-//   // Public routes that don't require authentication
-//   publicRoutes: [
-//     "/",
-//     "/about",
-//     "/contact",
-//     "/portfolio",
-//     "/portfolio/(.*)",
-//     "/api/subsidiaries",
-//     "/api/subsidiaries/(.*)",
-//   ],
-// })
-
-// export const config = {
-//   matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
-// }
-
-// import { NextResponse } from "next/server"
-// import type { NextRequest } from "next/server"
-// import { getSession } from "./lib/auth"
-
-// export async function middleware(request: NextRequest) {
-//   // Public routes that don't require authentication
-//   const publicRoutes = [
-//     "/",
-//     "/about",
-//     "/contact",
-//     "/portfolio/tech",
-//     "/portfolio/liquor",
-//     "/auth/login",
-//     "/auth/register",
-//     "/api/auth/login",
-//     "/api/auth/register",
-//     "/api/subsidiaries",
-//     "/api/subsidiaries/(.*)",
-//   ]
-
-//   // Check if the requested path is public
-//   const isPublicRoute = publicRoutes.some((route) => {
-//     if (route.endsWith("(.*)")) {
-//       const baseRoute = route.replace("(.*)", "")
-//       return request.nextUrl.pathname.startsWith(baseRoute)
-//     }
-//     return request.nextUrl.pathname === route
-//   })
-
-//   // Allow access to public routes without authentication
-//   if (isPublicRoute) {
-//     return NextResponse.next()
-//   }
-
-//   // For protected routes, check if the user is authenticated
-//   const session = await getSession()
-
-//   if (!session) {
-//     // Redirect to login page if not authenticated
-//     const loginUrl = new URL("/auth/login", request.url)
-//     loginUrl.searchParams.set("redirect", request.nextUrl.pathname)
-//     return NextResponse.redirect(loginUrl)
-//   }
-
-//   // Admin-only routes
-//   const adminRoutes = ["/admin", "/admin/(.*)"]
-//   const isAdminRoute = adminRoutes.some((route) => {
-//     if (route.endsWith("(.*)")) {
-//       const baseRoute = route.replace("(.*)", "")
-//       return request.nextUrl.pathname.startsWith(baseRoute)
-//     }
-//     return request.nextUrl.pathname === route
-//   })
-
-//   // Check if user has admin privileges for admin routes
-//   if (isAdminRoute && session.user.role !== "admin") {
-//     return NextResponse.redirect(new URL("/unauthorized", request.url))
-//   }
-
-//   return NextResponse.next()
-// }
-
-// export const config = {
-//   matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.png$).*)"],
-// }
-
-
-
-
-// import { NextResponse } from "next/server"
-// import type { NextRequest } from "next/server"
-// import { getSession } from "./lib/auth"
-
-// export async function middleware(request: NextRequest) {
-//   // Public routes that don't require authentication
-//   const publicRoutes = [
-//     "/",
-//     "/about",
-//     "/contact",
-//     "/portfolio",
-//     "/portfolio/tech",
-//     "/portfolio/liquor",
-//     "/blog",
-//     "/careers",
-//     "/auth/login",
-//     "/auth/register",
-//     "/api/auth/login",
-//     "/api/auth/register",
-//     "/api/subsidiaries",
-//     "/api/subsidiaries/(.*)",
-//   ]
-
-//   // Check if the requested path is public
-//   const isPublicRoute = publicRoutes.some((route) => {
-//     if (route.endsWith("(.*)")) {
-//       const baseRoute = route.replace("(.*)", "")
-//       return request.nextUrl.pathname.startsWith(baseRoute)
-//     }
-//     return request.nextUrl.pathname === route || request.nextUrl.pathname.startsWith(route + "/")
-//   })
-
-//   // Allow access to public routes without authentication
-//   if (isPublicRoute) {
-//     return NextResponse.next()
-//   }
-
-//   // For protected routes, check if the user is authenticated
-//   const session = await getSession()
-
-//   if (!session) {
-//     // Redirect to login page if not authenticated
-//     const loginUrl = new URL("/auth/login", request.url)
-//     loginUrl.searchParams.set("redirect", request.nextUrl.pathname)
-//     return NextResponse.redirect(loginUrl)
-//   }
-
-//   // Admin-only routes
-//   const adminRoutes = ["/admin", "/admin/(.*)"]
-//   const isAdminRoute = adminRoutes.some((route) => {
-//     if (route.endsWith("(.*)")) {
-//       const baseRoute = route.replace("(.*)", "")
-//       return request.nextUrl.pathname.startsWith(baseRoute)
-//     }
-//     return request.nextUrl.pathname === route
-//   })
-
-//   // Check if user has admin privileges for admin routes
-//   if (isAdminRoute && session.user.role !== "admin") {
-//     return NextResponse.redirect(new URL("/unauthorized", request.url))
-//   }
-
-//   // Dashboard routes
-//   const dashboardRoutes = ["/dashboard", "/dashboard/(.*)"]
-//   const isDashboardRoute = dashboardRoutes.some((route) => {
-//     if (route.endsWith("(.*)")) {
-//       const baseRoute = route.replace("(.*)", "")
-//       return request.nextUrl.pathname.startsWith(baseRoute)
-//     }
-//     return request.nextUrl.pathname === route
-//   })
-
-//   // Allow access to dashboard for authenticated users
-//   if (isDashboardRoute) {
-//     return NextResponse.next()
-//   }
-
-//   return NextResponse.next()
-// }
-
-// export const config = {
-//   matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.png$).*)"],
-// }
-
-
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
+import { decryptSession } from "./lib/session-encryption"
 
-export async function middleware(request: NextRequest) {
-  // Public routes that don't require authentication
-  const publicRoutes = [
-    "/",
-    "/about",
-    "/contact",
-    "/portfolio",
-    "/portfolio/tech",
-    "/portfolio/liquor",
-    "/blog",
-    "/careers",
-    "/auth/login",
-    "/auth/register",
-    "/api/auth/login",
-    "/api/auth/register",
-    "/api/subsidiaries",
-    "/api/subsidiaries/(.*)",
-  ]
+// Define public routes that don't require authentication
+const publicRoutes = [
+  "/",
+  "/about",
+  "/contact",
+  "/portfolio",
+  "/portfolio/tech",
+  "/portfolio/tech-solutions",
+  "/portfolio/tech-store",
+  "/portfolio/liquor",
+  "/portfolio/events",
+  "/portfolio/properties",
+  "/portfolio/grooming",
+  "/portfolio/stationery",
+  "/blog",
+  "/careers",
+  "/auth/login",
+  "/auth/register",
+  "/api/auth/login",
+  "/api/auth/register",
+  "/api/auth/verify-session",
+  "/api/subsidiaries",
+  "/api/subsidiaries/(.*)",
+]
 
+// Api endpoint to verify session in Edge Runtime
+export async function POST(request: Request) {
+  const body = await request.json()
+  const sessionToken = body.sessionToken
+  
+  if (!sessionToken) {
+    return NextResponse.json({ valid: false }, { status: 401 })
+  }
+  
+  const payload = await decryptSession(sessionToken)
+  
+  if (!payload || !payload.sessionId || new Date(payload.expiresAt as string) < new Date()) {
+    return NextResponse.json({ valid: false }, { status: 401 })
+  }
+  
+  return NextResponse.json({ 
+    valid: true,
+    user: {
+      id: payload.userId,
+      role: payload.role
+    }
+  })
+}
+
+export default async function middleware(request: NextRequest) {
+  const path = request.nextUrl.pathname
+  
   // Check if the requested path is public
   const isPublicRoute = publicRoutes.some((route) => {
     if (route.endsWith("(.*)")) {
@@ -207,20 +68,25 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // For protected routes, check if the user is authenticated
-  // Use the session_id cookie directly instead of getSession()
-  const sessionId = request.cookies.get("session_id")?.value
+  // For protected routes, decrypt and verify the session token
+  const sessionToken = request.cookies.get('session_token')?.value
   
-  if (!sessionId) {
+  if (!sessionToken) {
     // Redirect to login page if not authenticated
     const loginUrl = new URL("/auth/login", request.url)
-    loginUrl.searchParams.set("redirect", request.nextUrl.pathname)
+    loginUrl.searchParams.set("redirect", path)
     return NextResponse.redirect(loginUrl)
   }
-
-  // Since we can't perform database lookups in Edge middleware,
-  // we can optionally store essential user info (like role) in a separate cookie
-  // Or create an API endpoint to verify sessions and store the result
+  
+  // Decrypt and verify the session
+  const payload = await decryptSession(sessionToken)
+  
+  if (!payload || !payload.sessionId || new Date(payload.expiresAt as string) < new Date()) {
+    // Session is invalid or expired
+    const loginUrl = new URL("/auth/login", request.url)
+    loginUrl.searchParams.set("redirect", path)
+    return NextResponse.redirect(loginUrl)
+  }
 
   // Admin-only routes
   const adminRoutes = ["/admin", "/admin/(.*)"]
@@ -232,14 +98,14 @@ export async function middleware(request: NextRequest) {
     return request.nextUrl.pathname === route
   })
 
-  // If it's an admin route, we'll redirect to a server component that can verify admin status
-  if (isAdminRoute) {
-    return NextResponse.rewrite(new URL("/api/auth/verify-admin?redirect=" + encodeURIComponent(request.nextUrl.pathname), request.url))
+  // Check if user has admin privileges for admin routes
+  if (isAdminRoute && payload.role !== "admin") {
+    return NextResponse.redirect(new URL("/unauthorized", request.url))
   }
 
-  // Dashboard routes
-  const dashboardRoutes = ["/admin", "/dashboard/(.*)"]
-  const isDashboardRoute = dashboardRoutes.some((route) => {
+  // Subsidiary admin routes
+  const subsidiaryAdminRoutes = ["/subsidiary-admin", "/subsidiary-admin/(.*)"]
+  const isSubsidiaryAdminRoute = subsidiaryAdminRoutes.some((route) => {
     if (route.endsWith("(.*)")) {
       const baseRoute = route.replace("(.*)", "")
       return request.nextUrl.pathname.startsWith(baseRoute)
@@ -247,9 +113,29 @@ export async function middleware(request: NextRequest) {
     return request.nextUrl.pathname === route
   })
 
-  // Allow access to dashboard for authenticated users
-  if (isDashboardRoute) {
-    return NextResponse.next()
+  // Check if user has subsidiary admin privileges for subsidiary admin routes
+  if (isSubsidiaryAdminRoute && payload.role !== "subsidiary_admin" && payload.role !== "admin") {
+    return NextResponse.redirect(new URL("/unauthorized", request.url))
+  }
+
+  // Staff routes
+  const staffRoutes = ["/staff", "/staff/(.*)"]
+  const isStaffRoute = staffRoutes.some((route) => {
+    if (route.endsWith("(.*)")) {
+      const baseRoute = route.replace("(.*)", "")
+      return request.nextUrl.pathname.startsWith(baseRoute)
+    }
+    return request.nextUrl.pathname === route
+  })
+
+  // Check if user has staff privileges for staff routes
+  if (
+    isStaffRoute &&
+    payload.role !== "staff" &&
+    payload.role !== "subsidiary_admin" &&
+    payload.role !== "admin"
+  ) {
+    return NextResponse.redirect(new URL("/unauthorized", request.url))
   }
 
   return NextResponse.next()

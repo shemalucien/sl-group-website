@@ -78,6 +78,7 @@
     "expo-sqlite": "latest",
     "gel": "latest",
     "input-otp": "1.4.1",
+    "jose": "^6.0.10",
     "knex": "latest",
     "kysely": "latest",
     "lucide-react": "^0.454.0",
