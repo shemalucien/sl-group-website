@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { subsidiaries, testimonials,teamMembers} from "@/db/schema"
-import { eq, and, gte, lte, desc, asc, like, count, sum } from "drizzle-orm"
+import { eq, and, gte, lte, desc, asc, like, count, sum, isNull} from "drizzle-orm"
 import { cache } from "react"
 
 import * as dotenv from "dotenv";
@@ -238,6 +238,49 @@ export async function getTeamMembers(limit?: number) {
   // }
 
   return query
+}
+
+
+// Team members with filtering
+export async function getFilteredTeamMembers({
+  isLeadership,
+  subsidiarySlug,
+  limit,
+  offset = 0,
+}: {
+  isLeadership?: boolean;
+  subsidiarySlug?: string;
+  limit?: number;
+  offset?: number;
+}) {
+  try {
+    const query = db.query.teamMembers.findMany({
+      where: and(
+        eq(teamMembers.isActive, true),
+        // Apply leadership filter if specified
+        isLeadership !== undefined ? eq(teamMembers.isLeadership, isLeadership) : undefined,
+        // // Apply subsidiary filter if specified
+        // subsidiarySlug ? eq(teamMembers.subsidiaryId, Number(subsidiarySlug)) : undefined
+      ),
+      orderBy: [desc(teamMembers.isLeadership), asc(teamMembers.order)],
+      limit: limit ?? undefined,
+      offset: offset ?? undefined,
+      // Fetch subsidiary information
+      with: {
+        subsidiary: true,
+      },
+    });
+
+    // Execute the query
+    const result = await query;
+
+    console.log("Filtered Team Members:", result);
+
+    return result;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch filtered team members.");
+  }
 }
 
 export async function getTeamMemberById(id: number) {

@@ -267,6 +267,7 @@ import { BlogPreview } from "@/components/blog-preview";
 import { SocialFeed } from "@/components/social-feed";
 import { JobListingCard } from "@/components/job-listing-card";
 import { TeamSection } from "@/components/team-section"
+import { Suspense } from "react";
 
 
 export default async function HomePage() {
@@ -423,6 +424,10 @@ export default async function HomePage() {
 
          {/* Team Section - NEW */}
          <TeamSection />
+             {/* Team Section - NEW */}
+        {/* <Suspense fallback={<div className="py-16 text-center">Loading team section...</div>}>
+          <TeamSection />
+        </Suspense> */}
 
         {/* Careers Section - NEW */}
         <section className="w-full py-12 md:py-24 lg:py-32 bg-background">

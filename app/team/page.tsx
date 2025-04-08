@@ -1,6 +1,9 @@
 import type { Metadata } from "next"
 import { TeamMemberCard } from "@/components/team-member-card"
 import { getTeamMembers } from "@/lib/data"
+import { TeamFilters } from "@/components/team-filters"
+import { Suspense } from "react"
+import { getSubsidiaries } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Our Team | SL Group",
@@ -10,6 +13,7 @@ export const metadata: Metadata = {
 
 export default async function TeamPage() {
   const teamMembers = await getTeamMembers()
+  const subsidiaries = await getSubsidiaries();
 
   return (
     <main className="min-h-screen">
@@ -21,6 +25,19 @@ export default async function TeamPage() {
             innovative solutions.
           </p>
         </div>
+
+                <TeamFilters
+                subsidiaries={subsidiaries.map((subsidiary) => ({
+                id: subsidiary.id,
+                name: subsidiary.name,
+                slug: subsidiary.slug ?? "",
+                isActive: subsidiary.isActive ?? false,
+                }))}
+                /> 
+        {/* 
+        <Suspense fallback={<div className="text-center py-12">Loading team members...</div>}>
+                  <TeamMembersWrapper />
+                </Suspense> */}
       </section>
 
       <section className="py-16">
@@ -30,7 +47,7 @@ export default async function TeamPage() {
               {teamMembers.map((member) => (
                 <TeamMemberCard
                   key={member.id}
-                  id={String(member.id)}
+                  id={member.id}
                   name={member.name}
                   position={member.position}
                   bio={member.bio ?? ""}
