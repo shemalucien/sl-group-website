@@ -266,6 +266,8 @@ import { getSubsidiaries } from "@/lib/data";
 import { BlogPreview } from "@/components/blog-preview";
 import { SocialFeed } from "@/components/social-feed";
 import { JobListingCard } from "@/components/job-listing-card";
+import { TeamSection } from "@/components/team-section"
+
 
 export default async function HomePage() {
   // Only fetch active subsidiaries
@@ -418,6 +420,9 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
+
+         {/* Team Section - NEW */}
+         <TeamSection />
 
         {/* Careers Section - NEW */}
         <section className="w-full py-12 md:py-24 lg:py-32 bg-background">

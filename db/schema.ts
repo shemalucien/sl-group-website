@@ -30,6 +30,33 @@ export const subsidiaries = pgTable("subsidiaries", {
 })
 
 
+// Team members table
+export const teamMembers = pgTable("team_members", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  position: varchar("position", { length: 100 }).notNull(),
+  bio: text("bio"),
+  imageUrl: varchar("image_url", { length: 255 }),
+  email: varchar("email", { length: 255 }),
+  phone: varchar("phone", { length: 50 }),
+  socialLinks: json("social_links"), // Store social media links as JSON
+  department: varchar("department", { length: 100 }),
+  order: integer("order").default(0), // For custom ordering
+  isActive: boolean("is_active").default(true),
+  isLeadership: boolean("is_leadership").default(false), // Flag for leadership team
+  subsidiaryId: integer("subsidiary_id").references(() => subsidiaries.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  linkedin: varchar("linkedin", { length: 255 }),
+  twitter: varchar("twitter", { length: 255 }),
+  facebook: varchar("facebook", { length: 255 }),
+  expertise: text("expertise"),
+  education: text("education"),
+  featured: boolean("featured").default(false),
+  sortOrder: integer("sort_order").default(0),
+})
+
+
 // Add services to subsidiary relations
 export const subsidiaryRelations = relations(subsidiaries, ({ one, many }) => ({
   parent: one(subsidiaries, {
@@ -483,6 +510,7 @@ export const subsidiariesRelations = relations(subsidiaries, ({ many }) => ({
   socialMediaPosts: many(socialMediaPosts),
   employees: many(employees),
   rentalItems: many(rentalItems),
+  teamMembers: many(teamMembers), // Added relation to team members
 }))
 
 export const servicesRelations = relations(services, ({ one }) => ({
@@ -641,3 +669,11 @@ export const paymentsRelations = relations(payments, ({ one }) => ({
   }),
 }))
 
+
+// Add relations for team members
+export const teamMembersRelations = relations(teamMembers, ({ one }) => ({
+  subsidiary: one(subsidiaries, {
+    fields: [teamMembers.subsidiaryId],
+    references: [subsidiaries.id],
+  }),
+}))

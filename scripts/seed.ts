@@ -11,6 +11,8 @@ import {
   blogPostCategories,
   blogComments,
   blogCategories,
+  teamMembers,
+  sessions,
 } from "@/db/schema";
 import bcrypt from "bcryptjs";
 
@@ -25,10 +27,12 @@ async function seed() {
     await db.delete(products);
     await db.delete(testimonials);
     await db.delete(services);
+    await db.delete(sessions);
     await db.delete(users);
     await db.delete(subsidiaries);
     await db.delete(blogPostCategories);
     await db.delete(blogComments);
+    await db.delete(teamMembers);
 
     // // Insert subsidiaries - only Tech and Liquor are active
     // const [techSubsidiary] = await db
@@ -775,6 +779,110 @@ async function seed() {
         subsidiaryId: liquorSubsidiary.id,
       },
     ]);
+
+      // Seed team members
+      const teamMembersData = [
+        {
+          name: "John Smith",
+          position: "Chief Executive Officer",
+          bio: "John Smith is the CEO of SL Group with over 20 years of experience in business management and strategic leadership. He has successfully led the company through significant growth and expansion into multiple industries.\n\nUnder his leadership, SL Group has become one of the most diversified and respected business groups in the region, with a strong focus on innovation and customer satisfaction.",
+          imageUrl: "/images/team/john-smith.jpg",
+          email: "john.smith@slgroup.com",
+          linkedin: "https://linkedin.com/in/johnsmith",
+          twitter: "https://twitter.com/johnsmith",
+          expertise: "Strategic Leadership, Business Development, Corporate Finance, Mergers & Acquisitions",
+          education: "MBA, Harvard Business School, BSc in Business Administration",
+          featured: true,
+          sortOrder: 1,
+          subsidiaryId: null,
+          isLeadership: true,
+          isActive: true,
+        },
+        {
+          name: "Sarah Johnson",
+          position: "Chief Operating Officer",
+          bio: "Sarah Johnson serves as the COO of SL Group, overseeing the day-to-day administrative and operational functions of the company. With her extensive background in operations management, she has implemented efficient processes across all subsidiaries.\n\nSarah is passionate about operational excellence and has been instrumental in streamlining operations across all SL Group subsidiaries.",
+          imageUrl: "/images/team/sarah-johnson.jpg",
+          email: "sarah.johnson@slgroup.com",
+          linkedin: "https://linkedin.com/in/sarahjohnson",
+          expertise: "Operations Management, Process Optimization, Supply Chain Management, Team Leadership",
+          education: "MSc in Operations Management, BSc in Business Administration",
+          featured: true,
+          sortOrder: 2,
+          subsidiaryId: null,
+          isLeadership: true,
+          isActive: true,
+        },
+        {
+          name: "Michael Chen",
+          position: "Chief Technology Officer",
+          bio: "Michael Chen is the CTO of SL Group, responsible for overseeing all technical aspects of the company. He leads our technology strategy and ensures that all our subsidiaries leverage cutting-edge technology to maintain competitive advantage.\n\nWith a background in software engineering and a passion for innovation, Michael has been instrumental in driving digital transformation across the SL Group portfolio.",
+          imageUrl: "/images/team/michael-chen.jpg",
+          email: "michael.chen@slgroup.com",
+          linkedin: "https://linkedin.com/in/michaelchen",
+          twitter: "https://twitter.com/michaelchen",
+          expertise: "Software Development, Digital Transformation, IT Infrastructure, Cybersecurity",
+          education: "MSc in Computer Science, BSc in Software Engineering",
+          featured: true,
+          sortOrder: 3,
+          subsidiaryId: techInnovators.id,
+          isLeadership: true,
+          isActive: true
+        },
+        {
+          name: "Emily Rodriguez",
+          position: "Chief Marketing Officer",
+          bio: "Emily Rodriguez is the CMO of SL Group, leading all marketing and brand strategy initiatives across our diverse portfolio of businesses. With her creative approach and data-driven mindset, she has successfully positioned each subsidiary in their respective markets.\n\nEmily has a proven track record of building strong brands and developing effective marketing campaigns that drive business growth.",
+          imageUrl: "/images/team/emily-rodriguez.jpg",
+          email: "emily.rodriguez@slgroup.com",
+          linkedin: "https://linkedin.com/in/emilyrodriguez",
+          twitter: "https://twitter.com/emilyrodriguez",
+          expertise: "Brand Strategy, Digital Marketing, Consumer Behavior, Market Research",
+          education: "MBA with Marketing Specialization, BA in Communications",
+          featured: false,
+          sortOrder: 4,
+          subsidiaryId: techSolutions.id,
+          isLeadership: true,
+          isActive: true,
+        },
+        {
+          name: "David Okonkwo",
+          position: "Chief Financial Officer",
+          bio: "David Okonkwo serves as the CFO of SL Group, overseeing all financial operations, reporting, and strategy. His expertise in financial management has been crucial in maintaining the group's strong financial health and supporting its expansion plans.\n\nWith a background in investment banking and corporate finance, David brings valuable insights to the company's financial decision-making process.",
+          imageUrl: "/images/team/david-okonkwo.jpg",
+          email: "david.okonkwo@slgroup.com",
+          linkedin: "https://linkedin.com/in/davidokonkwo",
+          expertise: "Financial Planning, Investment Strategy, Risk Management, Corporate Finance",
+          education: "CFA, MBA in Finance, BSc in Economics",
+          featured: false,
+          sortOrder: 5,
+          subsidiaryId: null,
+          isLeadership: true,
+          isActive: true,
+        },
+        {
+          name: "Lisa Wong",
+          position: "Head of Human Resources",
+          bio: "Lisa Wong leads the Human Resources department at SL Group, focusing on talent acquisition, employee development, and fostering a positive company culture. She has implemented innovative HR practices that have significantly improved employee satisfaction and retention across all subsidiaries.\n\nLisa is passionate about creating an inclusive workplace where employees can thrive and reach their full potential.",
+          imageUrl: "/images/team/lisa-wong.jpg",
+          email: "lisa.wong@slgroup.com",
+          linkedin: "https://linkedin.com/in/lisawong",
+          expertise: "Talent Management, Organizational Development, Employee Relations, HR Strategy",
+          education: "MA in Human Resource Management, BA in Psychology",
+          featured: false,
+          sortOrder: 6,
+          subsidiaryId: liquorSubsidiary.id,
+        },
+
+      ]
+  
+      console.log(`Seeding ${teamMembersData.length} team members...`)
+  
+      for (const member of teamMembersData) {
+        await db.insert(teamMembers).values(member).onConflictDoNothing()
+      }
+  
+      console.log("Team members seeded successfully!")
 
     console.log("Database seeded successfully!");
   } catch (error) {

@@ -1,6 +1,6 @@
 import { db } from "@/db"
-import { subsidiaries, testimonials } from "@/db/schema"
-import { eq } from "drizzle-orm"
+import { subsidiaries, testimonials,teamMembers} from "@/db/schema"
+import { eq, and, gte, lte, desc, asc, like, count, sum } from "drizzle-orm"
 import { cache } from "react"
 
 import * as dotenv from "dotenv";
@@ -222,3 +222,108 @@ export const getTestimonials = cache(async (subsidiaryId?: number) => {
 })
 
 
+// Team members related queries
+export async function getTeamMembers(limit?: number) {
+  const query = db.query.teamMembers.findMany({
+    where: eq(teamMembers.isActive, true),
+    orderBy: [desc(teamMembers.isLeadership), teamMembers.order],
+    limit: limit ?? undefined,
+    with: {
+      subsidiary: true,
+    },
+  })
+
+  // if (limit) {
+  //   return query.limit(limit)
+  // }
+
+  return query
+}
+
+export async function getTeamMemberById(id: number) {
+  return db.query.teamMembers.findFirst({
+    where: eq(teamMembers.id, id),
+    with: {
+      subsidiary: true,
+    },
+  })
+}
+
+export async function getLeadershipTeam() {
+  return db.query.teamMembers.findMany({
+    where: and(eq(teamMembers.isActive, true), eq(teamMembers.isLeadership, true)),
+    orderBy: [teamMembers.order],
+    with: {
+      subsidiary: true,
+    },
+  })
+}
+
+export async function getTeamMembersByDepartment(department: string) {
+  return db.query.teamMembers.findMany({
+    where: and(eq(teamMembers.isActive, true), eq(teamMembers.department, department)),
+    orderBy: [desc(teamMembers.isLeadership), teamMembers.order],
+    with: {
+      subsidiary: true,
+    },
+  })
+}
+
+export async function getTeamMembersBySubsidiary(subsidiaryId: number) {
+  return db.query.teamMembers.findMany({
+    where: and(eq(teamMembers.isActive, true), eq(teamMembers.subsidiaryId, subsidiaryId)),
+    orderBy: [desc(teamMembers.isLeadership), teamMembers.order],
+    with: {
+      subsidiary: true,
+    },
+  })
+}
+
+// Team Members
+export async function getTeamMembersWithParams({
+  featured = false,
+  limit = 100,
+  offset = 0,
+  sortBy = "name",
+  sortOrder = "asc",
+} = {}) {
+  try {
+    const query = db.select().from(teamMembers)
+
+    // Apply featured filter if specified
+    if (featured) {
+      query.where(eq(teamMembers.featured, true))
+    }
+
+    // // Apply sorting
+    // if (sortOrder === "asc") {
+    //   query.orderBy(asc(teamMembers[sortBy as keyof typeof teamMembers]))
+    // } else {
+    //   query.orderBy(desc(teamMembers[sortBy as keyof typeof teamMembers]))
+    // }
+
+    // Apply pagination
+    query.limit(limit).offset(offset)
+
+    const result = await query
+    return result
+  } catch (error) {
+    console.error("Database Error:", error)
+    throw new Error("Failed to fetch team members.")
+  }
+}
+
+export async function getTeamMemberByIdString(id: string) {
+  try {
+    const result = await db.select().from(teamMembers).where(eq(teamMembers.id, Number(id))).limit(1)
+
+    return result[0] || null
+  } catch (error) {
+    console.error("Database Error:", error)
+    throw new Error("Failed to fetch team member.")
+  }
+}
+
+export async function getFeaturedTeamMembers(limit = 3) {
+  return getTeamMembersWithParams({ featured: true, limit })
+}
