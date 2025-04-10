@@ -304,7 +304,7 @@ export default function Header() {
         }
         const data = await response.json()
         // Filter only active subsidiaries
-        setSubsidiaries(data.filter((sub: Subsidiary) => sub.isActive))
+        setSubsidiaries(data.filter((sub: Subsidiary) => sub.isActive && (sub.slug === "tech" || sub.slug === "liquor" || sub.slug === "tech-solutions")))
       } catch (error) {
         console.error("Error fetching subsidiaries:", error)
       } finally {
@@ -372,6 +372,9 @@ export default function Header() {
               </div>
             )}
           </div>
+          <Link href= "team" className="text-sm font-medium transition-colors hover:text-primary">
+            Team
+          </Link>
           <Link href="/blog" className="text-sm font-medium transition-colors hover:text-primary">
             Blog
           </Link>

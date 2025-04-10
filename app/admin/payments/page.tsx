@@ -7,13 +7,13 @@ import { Download } from 'lucide-react'
 export default async function PaymentsPage() {
   const allPayments = await db.query.payments.findMany({
     orderBy: (payments, { desc }) => [desc(payments.createdAt)],
-    with: {
-      order: {
-        with: {
-          user: true,
-        },
-      },
-    },
+    // with: {
+    // order: {
+    //     with: {
+    //       user: true,
+    //     },
+    //   },
+    // },
   })
 
   const columns = [

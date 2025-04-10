@@ -151,8 +151,8 @@ export default async function DashboardPage() {
   }
 
   return (
-    <main className="flex-1">
-      <div className="container px-4 md:px-6 py-8">
+    <main className="flex-1 min-h-screen">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* <h1 className="text-3xl font-bold mb-8">Dashboard</h1> */}
 
         {/* Show different dashboard based on user role */}
@@ -160,15 +160,6 @@ export default async function DashboardPage() {
         {user.role === "staff" && <StaffDashboard user={user} />}
         {user.role === "subsidiary_admin" && <SubsidiaryAdminDashboard user={user} />}
         {user.role === "admin" && (
-          // <div className="space-y-4">
-          //   <p className="text-muted-foreground">
-          //     You are logged in as an administrator. Please use the admin dashboard for full access to all features.
-          //   </p>
-          //   <a href="/admin/dashboard" className="text-primary hover:underline">
-          //     Go to Admin Dashboard
-          //   </a>
-          // </div>
-          // Redirect to the dashboard page
           <AdminDashboard />
         )}
       </div>

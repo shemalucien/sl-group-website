@@ -14,7 +14,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx db/migrate.ts",
     "db:seed": "tsx scripts/seed.ts",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "icons": "tsx scripts/generate-icons.ts"
   },
   "dependencies": {
     "@aws-sdk/client-rds-data": "latest",
@@ -93,6 +94,7 @@
     "react-hook-form": "^7.55.0",
     "react-resizable-panels": "^2.1.7",
     "recharts": "2.15.0",
+    "sharp": "^0.34.1",
     "sonner": "^1.7.1",
     "sql.js": "latest",
     "sqlite3": "latest",
@@ -114,6 +116,7 @@
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
     "tsx": "^4.6.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "workbox-webpack-plugin": "^7.3.0"
   }
 }

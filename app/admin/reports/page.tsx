@@ -99,7 +99,7 @@ export default async function ReportsPage() {
         </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+      {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
             <CardTitle>Sales Overview</CardTitle>
@@ -150,8 +150,8 @@ export default async function ReportsPage() {
               </ResponsiveContainer>
             </ChartContainer>
           </CardContent>
-        </Card>
-        <Card className="col-span-3">
+        </Card> */}
+        {/* <Card className="col-span-3">
           <CardHeader>
             <CardTitle>Subsidiary Performance</CardTitle>
             <CardDescription>Sales by subsidiary</CardDescription>
@@ -179,9 +179,9 @@ export default async function ReportsPage() {
             </ChartContainer>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
 
-      <Tabs defaultValue="sales" className="space-y-4">
+      {/* <Tabs defaultValue="sales" className="space-y-4">
         <TabsList>
           <TabsTrigger value="sales">Sales Reports</TabsTrigger>
           <TabsTrigger value="inventory">Inventory Reports</TabsTrigger>
@@ -275,7 +275,7 @@ export default async function ReportsPage() {
             </CardContent>
           </Card>
         </TabsContent>
-      </Tabs>
+      </Tabs> */}
     </div>
   )
 }

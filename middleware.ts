@@ -63,6 +63,11 @@ export default async function middleware(request: NextRequest) {
     return request.nextUrl.pathname === route || request.nextUrl.pathname.startsWith(route + "/")
   })
 
+  // Skip middleware for manifest requests
+  if (request.nextUrl.pathname === '/manifest.json') {
+    return NextResponse.next();
+  }
+
   // Allow access to public routes without authentication
   if (isPublicRoute) {
     return NextResponse.next()

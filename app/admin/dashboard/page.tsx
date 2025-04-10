@@ -1,5 +1,5 @@
 import { db } from "@/db"
-import { users, products, orders, blogPosts, jobListings, appointments, notifications, employees } from "@/db/schema"
+import { users, products, orders, blogPosts, jobListings, appointments, notifications, employees, teamMembers } from "@/db/schema"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Overview } from "@/components/admin/overview"
@@ -27,6 +27,7 @@ export default async function AdminDashboard() {
     appointmentCount,
     notificationCount,
     employeeCount,
+    teamMemberCount,
   ] = await Promise.all([
     db
       .select({ count: count() })
@@ -60,6 +61,10 @@ export default async function AdminDashboard() {
     db
       .select({ count: count() })
       .from(employees)
+      .then((res) => res[0].count),
+    db
+      .select({ count: count() })
+      .from(teamMembers)
       .then((res) => res[0].count),
   ])
 
@@ -143,6 +148,15 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{employeeCount}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Team Members</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{teamMemberCount}</div>
           </CardContent>
         </Card>
         <Card>

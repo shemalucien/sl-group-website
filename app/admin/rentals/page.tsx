@@ -10,7 +10,7 @@ export default async function RentalsPage() {
     orderBy: (rentals, { desc }) => [desc(rentals.createdAt)],
     with: {
       user: true,
-      item: true,
+      // item: true,
     },
   })
 

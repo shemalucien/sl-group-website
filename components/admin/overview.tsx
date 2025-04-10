@@ -75,7 +75,7 @@ export function Overview() {
         <CardDescription>Monthly orders and revenue for the current year.</CardDescription>
       </CardHeader>
       <CardContent className="px-2">
-        <div className="h-[300px]">
+        <div className="h-full w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data}>
               <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
