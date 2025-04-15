@@ -3,6 +3,7 @@
 import { db } from "@/db"
 import { appointments } from "@/db/schema"
 import { getCurrentUser } from "@/lib/auth"
+import { PgColumn } from "drizzle-orm/pg-core"
 import { revalidatePath } from "next/cache"
 
 export async function createAppointment({
@@ -75,7 +76,8 @@ export async function updateAppointmentStatus({
     await db
       .update(appointments)
       .set({ status })
-      .where((appointments, { eq }) => eq(appointments.id, appointmentId))
+      .where(eq(appointments.id, appointmentId))
+  
 
     revalidatePath("/dashboard/appointments")
     return { success: true }
@@ -83,5 +85,8 @@ export async function updateAppointmentStatus({
     console.error("Failed to update appointment:", error)
     return { success: false, message: "Failed to update appointment" }
   }
+}
+function eq(id: PgColumn<{ name: "id"; tableName: "appointments"; dataType: "number"; columnType: "PgSerial"; data: number; driverParam: number; notNull: true; hasDefault: true; isPrimaryKey: true; isAutoincrement: false; hasRuntimeDefault: false; enumValues: undefined; baseColumn: never; identity: undefined; generated: undefined }, {}, {}>, appointmentId: number): import("drizzle-orm").SQL<unknown> | undefined {
+  throw new Error("Function not implemented.")
 }
 

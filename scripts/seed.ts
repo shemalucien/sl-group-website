@@ -13,6 +13,8 @@ import {
   blogCategories,
   teamMembers,
   sessions,
+  employees,
+  inventory
 } from "@/db/schema";
 import bcrypt from "bcryptjs";
 
@@ -28,107 +30,13 @@ async function seed() {
     await db.delete(testimonials);
     await db.delete(services);
     await db.delete(sessions);
+    await db.delete(teamMembers);
+    await db.delete(employees);
     await db.delete(users);
     await db.delete(subsidiaries);
     await db.delete(blogPostCategories);
     await db.delete(blogComments);
-    await db.delete(teamMembers);
-
-    // // Insert subsidiaries - only Tech and Liquor are active
-    // const [techSubsidiary] = await db
-    //   .insert(subsidiaries)
-    //   .values({
-    //     name: "SL Tech Innovators",
-    //     slug: "tech",
-    //     tagline: "Empowering Businesses with Smart IT Solutions",
-    //     description:
-    //       "SL Tech Innovators delivers comprehensive technology services designed to transform business operations and drive digital excellence.",
-    //     iconName: "Building2",
-    //     primaryColor: "blue-600",
-    //     secondaryColor: "blue-800",
-    //     isActive: true,
-    //   })
-    //   .returning();
-
-    // // Add SL Tech Solutions and SL Tech Store
-    // const [techSolutions] = await db
-    //   .insert(subsidiaries)
-    //   .values({
-    //     name: "SL Tech Solutions",
-    //     slug: "tech-solutions",
-    //     tagline: "Quality Technology, Expert Guidance, Complete Solutions",
-    //     description:
-    //       "SL Tech Solutions is your comprehensive technology partner, delivering a premium retail and service experience. We specialize in curated IT hardware, professional consulting, white-glove implementation, and ongoing support—everything you need to power your personal or business technology ecosystem.",
-    //     iconName: "laptop",
-    //     primaryColor: "#3B82F6",
-    //     secondaryColor: "#93C5FD",
-    //     isActive: true,
-    //   })
-    //   .returning();
-
-    // const [techStore] = await db
-    //   .insert(subsidiaries)
-    //   .values({
-    //     name: "SL Tech Store",
-    //     slug: "tech-store",
-    //     tagline: "Your One-Stop IT Solutions Hub",
-    //     description:
-    //       "SL Tech Store delivers a seamless technology retail experience by offering a curated selection of premium hardware backed by expert services. Whether you're a business scaling up or an individual upgrading your setup, we provide the right tools and support to power your productivity.",
-    //     iconName: "monitor",
-    //     primaryColor: "#10B981",
-    //     secondaryColor: "#6EE7B7",
-    //     isActive: true,
-    //   })
-    //   .returning();
-
-    // // Insert services for Tech subsidiary
-    // await db.insert(services).values([
-    //   {
-    //     subsidiaryId: techSubsidiary.id,
-    //     name: "Custom Software Development",
-    //     description:
-    //       "We design and develop custom software solutions tailored to your specific business needs.",
-    //     iconName: "Code",
-    //   },
-    //   {
-    //     subsidiaryId: techSubsidiary.id,
-    //     name: "IT Support",
-    //     description:
-    //       "Our comprehensive IT support services ensure your systems run smoothly.",
-    //     iconName: "Laptop",
-    //   },
-    //   {
-    //     subsidiaryId: techSubsidiary.id,
-    //     name: "Cybersecurity",
-    //     description:
-    //       "Protect your business from cyber threats with our comprehensive security solutions.",
-    //     iconName: "ShieldCheck",
-    //   },
-    // ]);
-    // // Add SL Tech Store services
-    // await db.insert(services).values([
-    //   {
-    //     subsidiaryId: techStore.id,
-    //     name: "Premium Hardware",
-    //     description:
-    //       "Explore our curated selection of high-performance laptops, desktops, and accessories.",
-    //     iconName: "Monitor",
-    //   },
-    //   {
-    //     subsidiaryId: techStore.id,
-    //     name: "Networking Solutions",
-    //     description:
-    //       "Get the best networking gear to keep your business connected.",
-    //     iconName: "Wifi",
-    //   },
-    //   {
-    //     subsidiaryId: techStore.id,
-    //     name: "Installation & Support",
-    //     description:
-    //       "We provide expert installation and ongoing support for all your technology needs.",
-    //     iconName: "Tool",
-    //   },
-    // ]);
+    await db.delete(inventory);
 
     // Insert SL Tech Solutions (parent)
     const [techSolutions] = await db
@@ -499,6 +407,7 @@ async function seed() {
         category: "wine",
         stock: 24,
         isActive: true,
+        subsidiaryId: liquorSubsidiary.id,
       },
       {
         name: "Highland Single Malt",
@@ -508,6 +417,7 @@ async function seed() {
         category: "spirits",
         stock: 15,
         isActive: true,
+        subsidiaryId: liquorSubsidiary.id,
       },
       {
         name: "Craft IPA Collection",
@@ -517,36 +427,9 @@ async function seed() {
         category: "beer",
         stock: 50,
         isActive: true,
+        subsidiaryId: liquorSubsidiary.id,
       },
     ]);
-
-    // // Insert blog posts
-    // await db.insert(blogPosts).values([
-    //   {
-    //     title: "The Future of Tech Innovation",
-    //     slug: "future-of-tech-innovation",
-    //     content:
-    //       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    //     excerpt:
-    //       "Exploring emerging technologies and their impact on business operations.",
-    //     authorId: 54, // Admin user
-    //     subsidiaryId: techInnovators.id,
-    //     isPublished: true,
-    //     publishedAt: new Date(),
-    //   },
-    //   {
-    //     title: "Wine Tasting: A Beginner's Guide",
-    //     slug: "wine-tasting-beginners-guide",
-    //     content:
-    //       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    //     excerpt:
-    //       "Learn the basics of wine tasting and how to areciate different varieties.",
-    //     authorId: 54, // Admin user
-    //     subsidiaryId: liquorSubsidiary.id,
-    //     isPublished: true,
-    //     publishedAt: new Date(),
-    //   },
-    // ]);
 
     // Ensure the blog_post_categories table exists
     await db.execute(`
@@ -598,13 +481,13 @@ async function seed() {
         slug: "wine",
       });
     }
-    
+
 
     // Check if categories exist before inserting blog post categories
     if (technologyCategory && wineCategory) {
       console.log(technologyCategory.id, wineCategory.id);
       // Step 2: Insert blog posts
-      const [techPost, winePost]= await db
+      const [techPost, winePost] = await db
         .insert(blogPosts)
         .values([
           {
@@ -651,7 +534,7 @@ async function seed() {
           },
         ])
         .returning();
-          // Pass "id" as an array;    
+      // Pass "id" as an array;    
       console.log(techPost.id, winePost.id);
       // Step 3: Insert blog post categories (many-to-many relationship)
       await db.insert(blogPostCategories).values([
@@ -693,32 +576,6 @@ async function seed() {
       // If categories do not exist, log a message or handle it
       console.log("One or more categories could not be found.");
     }
-
-    // // Insert job listings
-    // await db.insert(jobListings).values([
-    //   {
-    //     title: "Software Developer",
-    //     description:
-    //       "We're looking for a talented software developer to join our team.",
-    //     requirements:
-    //       "3+ years of experience with React, Node.js, and TypeScript.",
-    //     location: "Remote",
-    //     type: "Full-time",
-    //     subsidiaryId: techInnovators.id,
-    //     isActive: true,
-    //   },
-    //   {
-    //     title: "Sales Associate",
-    //     description:
-    //       "Join our team as a sales associate at SL Liquor & Market.",
-    //     requirements:
-    //       "Previous retail experience and knowledge of wines and spirits.",
-    //     location: "On-site",
-    //     type: "Full-time",
-    //     subsidiaryId: liquorSubsidiary.id,
-    //     isActive: true,
-    //   },
-    // ]);
 
     // Insert job listings with updated schema
     await db.insert(jobListings).values([
@@ -780,115 +637,171 @@ async function seed() {
       },
     ]);
 
-      // Seed team members
-      const teamMembersData = [
-        {
-          name: "John Smith",
-          position: "Chief Executive Officer",
-          bio: "John Smith is the CEO of SL Group with over 20 years of experience in business management and strategic leadership. He has successfully led the company through significant growth and expansion into multiple industries.\n\nUnder his leadership, SL Group has become one of the most diversified and respected business groups in the region, with a strong focus on innovation and customer satisfaction.",
-          imageUrl: "/images/team/john-smith.jpg",
-          email: "john.smith@slgroup.com",
-          linkedin: "https://linkedin.com/in/johnsmith",
-          twitter: "https://twitter.com/johnsmith",
-          expertise: "Strategic Leadership, Business Development, Corporate Finance, Mergers & Acquisitions",
-          education: "MBA, Harvard Business School, BSc in Business Administration",
-          featured: true,
-          sortOrder: 1,
-          subsidiaryId: null,
-          isLeadership: true,
-          isActive: true,
-        },
-        {
-          name: "Sarah Johnson",
-          position: "Chief Operating Officer",
-          bio: "Sarah Johnson serves as the COO of SL Group, overseeing the day-to-day administrative and operational functions of the company. With her extensive background in operations management, she has implemented efficient processes across all subsidiaries.\n\nSarah is passionate about operational excellence and has been instrumental in streamlining operations across all SL Group subsidiaries.",
-          imageUrl: "/images/team/sarah-johnson.jpg",
-          email: "sarah.johnson@slgroup.com",
-          linkedin: "https://linkedin.com/in/sarahjohnson",
-          expertise: "Operations Management, Process Optimization, Supply Chain Management, Team Leadership",
-          education: "MSc in Operations Management, BSc in Business Administration",
-          featured: true,
-          sortOrder: 2,
-          subsidiaryId: null,
-          isLeadership: true,
-          isActive: true,
-        },
-        {
-          name: "Michael Chen",
-          position: "Chief Technology Officer",
-          bio: "Michael Chen is the CTO of SL Group, responsible for overseeing all technical aspects of the company. He leads our technology strategy and ensures that all our subsidiaries leverage cutting-edge technology to maintain competitive advantage.\n\nWith a background in software engineering and a passion for innovation, Michael has been instrumental in driving digital transformation across the SL Group portfolio.",
-          imageUrl: "/images/team/michael-chen.jpg",
-          email: "michael.chen@slgroup.com",
-          linkedin: "https://linkedin.com/in/michaelchen",
-          twitter: "https://twitter.com/michaelchen",
-          expertise: "Software Development, Digital Transformation, IT Infrastructure, Cybersecurity",
-          education: "MSc in Computer Science, BSc in Software Engineering",
-          featured: true,
-          sortOrder: 3,
-          subsidiaryId: techInnovators.id,
-          isLeadership: true,
-          isActive: true
-        },
-        {
-          name: "Emily Rodriguez",
-          position: "Chief Marketing Officer",
-          bio: "Emily Rodriguez is the CMO of SL Group, leading all marketing and brand strategy initiatives across our diverse portfolio of businesses. With her creative approach and data-driven mindset, she has successfully positioned each subsidiary in their respective markets.\n\nEmily has a proven track record of building strong brands and developing effective marketing campaigns that drive business growth.",
-          imageUrl: "/images/team/emily-rodriguez.jpg",
-          email: "emily.rodriguez@slgroup.com",
-          linkedin: "https://linkedin.com/in/emilyrodriguez",
-          twitter: "https://twitter.com/emilyrodriguez",
-          expertise: "Brand Strategy, Digital Marketing, Consumer Behavior, Market Research",
-          education: "MBA with Marketing Specialization, BA in Communications",
-          featured: false,
-          sortOrder: 4,
-          subsidiaryId: techSolutions.id,
-          isLeadership: true,
-          isActive: true,
-        },
-        {
-          name: "David Okonkwo",
-          position: "Chief Financial Officer",
-          bio: "David Okonkwo serves as the CFO of SL Group, overseeing all financial operations, reporting, and strategy. His expertise in financial management has been crucial in maintaining the group's strong financial health and supporting its expansion plans.\n\nWith a background in investment banking and corporate finance, David brings valuable insights to the company's financial decision-making process.",
-          imageUrl: "/images/team/david-okonkwo.jpg",
-          email: "david.okonkwo@slgroup.com",
-          linkedin: "https://linkedin.com/in/davidokonkwo",
-          expertise: "Financial Planning, Investment Strategy, Risk Management, Corporate Finance",
-          education: "CFA, MBA in Finance, BSc in Economics",
-          featured: false,
-          sortOrder: 5,
-          subsidiaryId: null,
-          isLeadership: true,
-          isActive: true,
-        },
-        {
-          name: "Lisa Wong",
-          position: "Head of Human Resources",
-          bio: "Lisa Wong leads the Human Resources department at SL Group, focusing on talent acquisition, employee development, and fostering a positive company culture. She has implemented innovative HR practices that have significantly improved employee satisfaction and retention across all subsidiaries.\n\nLisa is passionate about creating an inclusive workplace where employees can thrive and reach their full potential.",
-          imageUrl: "/images/team/lisa-wong.jpg",
-          email: "lisa.wong@slgroup.com",
-          linkedin: "https://linkedin.com/in/lisawong",
-          expertise: "Talent Management, Organizational Development, Employee Relations, HR Strategy",
-          education: "MA in Human Resource Management, BA in Psychology",
-          featured: false,
-          sortOrder: 6,
-          subsidiaryId: liquorSubsidiary.id,
-        },
 
-      ]
-  
-      console.log(`Seeding ${teamMembersData.length} team members...`)
-  
-      for (const member of teamMembersData) {
-        await db.insert(teamMembers).values(member).onConflictDoNothing()
-      }
-  
-      console.log("Team members seeded successfully!")
+    // seed employees
+
+
+    await db.insert(employees).values([
+      {
+        userId: 1, // Example user ID
+        position: "Software Engineer",
+        department: "Engineering",
+        hireDate: new Date(),
+        salary: 80000, // Example salary in cents
+        status: "active",
+        subsidiaryId: techInnovators.id,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        userId: 2, // Example user ID
+        position: "Sales Associate",
+        department: "Sales",
+        hireDate: new Date(),
+        salary: 40000, // Example salary in cents
+        status: "active",
+        subsidiaryId: liquorSubsidiary.id,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      // Add more employee records as needed
+    ]);
+
+
+    // Seed team members
+    const teamMembersData = [
+      {
+        name: "John Smith",
+        position: "Chief Executive Officer",
+        bio: "John Smith is the CEO of SL Group with over 20 years of experience in business management and strategic leadership. He has successfully led the company through significant growth and expansion into multiple industries.\n\nUnder his leadership, SL Group has become one of the most diversified and respected business groups in the region, with a strong focus on innovation and customer satisfaction.",
+        imageUrl: "/images/team/john-smith.jpg",
+        email: "john.smith@slgroup.com",
+        linkedin: "https://linkedin.com/in/johnsmith",
+        twitter: "https://twitter.com/johnsmith",
+        expertise: "Strategic Leadership, Business Development, Corporate Finance, Mergers & Acquisitions",
+        education: "MBA, Harvard Business School, BSc in Business Administration",
+        featured: true,
+        sortOrder: 1,
+        subsidiaryId: null,
+        isLeadership: true,
+        isActive: true,
+      },
+      {
+        name: "Sarah Johnson",
+        position: "Chief Operating Officer",
+        bio: "Sarah Johnson serves as the COO of SL Group, overseeing the day-to-day administrative and operational functions of the company. With her extensive background in operations management, she has implemented efficient processes across all subsidiaries.\n\nSarah is passionate about operational excellence and has been instrumental in streamlining operations across all SL Group subsidiaries.",
+        imageUrl: "/images/team/sarah-johnson.jpg",
+        email: "sarah.johnson@slgroup.com",
+        linkedin: "https://linkedin.com/in/sarahjohnson",
+        expertise: "Operations Management, Process Optimization, Supply Chain Management, Team Leadership",
+        education: "MSc in Operations Management, BSc in Business Administration",
+        featured: true,
+        sortOrder: 2,
+        subsidiaryId: null,
+        isLeadership: true,
+        isActive: true,
+      },
+      {
+        name: "Michael Chen",
+        position: "Chief Technology Officer",
+        bio: "Michael Chen is the CTO of SL Group, responsible for overseeing all technical aspects of the company. He leads our technology strategy and ensures that all our subsidiaries leverage cutting-edge technology to maintain competitive advantage.\n\nWith a background in software engineering and a passion for innovation, Michael has been instrumental in driving digital transformation across the SL Group portfolio.",
+        imageUrl: "/images/team/michael-chen.jpg",
+        email: "michael.chen@slgroup.com",
+        linkedin: "https://linkedin.com/in/michaelchen",
+        twitter: "https://twitter.com/michaelchen",
+        expertise: "Software Development, Digital Transformation, IT Infrastructure, Cybersecurity",
+        education: "MSc in Computer Science, BSc in Software Engineering",
+        featured: true,
+        sortOrder: 3,
+        subsidiaryId: techInnovators.id,
+        isLeadership: true,
+        isActive: true
+      },
+      {
+        name: "Emily Rodriguez",
+        position: "Chief Marketing Officer",
+        bio: "Emily Rodriguez is the CMO of SL Group, leading all marketing and brand strategy initiatives across our diverse portfolio of businesses. With her creative approach and data-driven mindset, she has successfully positioned each subsidiary in their respective markets.\n\nEmily has a proven track record of building strong brands and developing effective marketing campaigns that drive business growth.",
+        imageUrl: "/images/team/emily-rodriguez.jpg",
+        email: "emily.rodriguez@slgroup.com",
+        linkedin: "https://linkedin.com/in/emilyrodriguez",
+        twitter: "https://twitter.com/emilyrodriguez",
+        expertise: "Brand Strategy, Digital Marketing, Consumer Behavior, Market Research",
+        education: "MBA with Marketing Specialization, BA in Communications",
+        featured: false,
+        sortOrder: 4,
+        subsidiaryId: techSolutions.id,
+        isLeadership: true,
+        isActive: true,
+      },
+      {
+        name: "David Okonkwo",
+        position: "Chief Financial Officer",
+        bio: "David Okonkwo serves as the CFO of SL Group, overseeing all financial operations, reporting, and strategy. His expertise in financial management has been crucial in maintaining the group's strong financial health and supporting its expansion plans.\n\nWith a background in investment banking and corporate finance, David brings valuable insights to the company's financial decision-making process.",
+        imageUrl: "/images/team/david-okonkwo.jpg",
+        email: "david.okonkwo@slgroup.com",
+        linkedin: "https://linkedin.com/in/davidokonkwo",
+        expertise: "Financial Planning, Investment Strategy, Risk Management, Corporate Finance",
+        education: "CFA, MBA in Finance, BSc in Economics",
+        featured: false,
+        sortOrder: 5,
+        subsidiaryId: null,
+        isLeadership: true,
+        isActive: true,
+      },
+      {
+        name: "Lisa Wong",
+        position: "Head of Human Resources",
+        bio: "Lisa Wong leads the Human Resources department at SL Group, focusing on talent acquisition, employee development, and fostering a positive company culture. She has implemented innovative HR practices that have significantly improved employee satisfaction and retention across all subsidiaries.\n\nLisa is passionate about creating an inclusive workplace where employees can thrive and reach their full potential.",
+        imageUrl: "/images/team/lisa-wong.jpg",
+        email: "lisa.wong@slgroup.com",
+        linkedin: "https://linkedin.com/in/lisawong",
+        expertise: "Talent Management, Organizational Development, Employee Relations, HR Strategy",
+        education: "MA in Human Resource Management, BA in Psychology",
+        featured: false,
+        sortOrder: 6,
+        subsidiaryId: liquorSubsidiary.id,
+      },
+
+    ]
+
+    console.log(`Seeding ${teamMembersData.length} team members...`)
+
+    // for (const member of teamMembersData) {
+    //   await db.insert(teamMembers).values(member).onConflictDoNothing()
+    // }
+
+    console.log("Team members seeded successfully!")
 
     console.log("Database seeded successfully!");
   } catch (error) {
     console.error("Error seeding database:", error);
     process.exit(1);
   }
+
+  // seed inventory 
+  await db.insert(inventory).values([
+    {
+      productId: 1, // Example product ID
+      quantity: 100,
+      reorderLevel: 20,
+      reorderQuantity: 50,
+      location: "Warehouse A",
+    },
+    {
+      productId: 2, // Example product ID
+      quantity: 50,
+      reorderLevel: 10,
+      reorderQuantity: 30,
+      location: "Warehouse B",
+    },
+    // Add more inventory records as needed
+  ]);
+  // seed orders 
+
+  // Insert products for Tech Store
+
+  // seed notifications
+
 }
 
 seed()

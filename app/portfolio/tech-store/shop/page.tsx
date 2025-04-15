@@ -1,12 +1,12 @@
 import { db } from "@/db"
-import { ProductCard } from "@/components/product-card"
-import { ProductFilters } from "@/components/product-filters"
+import { TechProductCard } from "@/components/tech-product-card"
+import { TechProductFilters } from "@/components/tech-product-filters"
 import { Button } from "@/components/ui/button"
-import { ShoppingBag, Filter } from "lucide-react"
+import { ShoppingBag, Filter } from 'lucide-react'
 import Link from "next/link"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
-export default async function ShopPage({
+export default async function TechShopPage({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined }
@@ -16,7 +16,7 @@ export default async function ShopPage({
   // Fetch products with filters
   const allProducts = await db.query.products.findMany({
     where: (products, { eq, and, gte, lte, inArray }) => {
-      const conditions = [eq(products.isActive, true)]
+      const conditions = [eq(products.isActive, true), eq(products.subsidiaryId, 2)] // Assuming tech store has subsidiaryId 2
 
       if (category && category !== "all") {
         conditions.push(eq(products.category, category as string))
@@ -45,20 +45,20 @@ export default async function ShopPage({
   return (
     <main className="flex-1">
       {/* Hero Section */}
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-red-900 to-red-700 text-white">
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-green-900 to-green-700 text-white">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center space-y-4 text-center">
             <div className="space-y-2">
               <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
-                SL Liquor & Market Shop
+                SL Tech Store
               </h1>
               <p className="mx-auto max-w-[700px] text-white/80 md:text-xl">
-                Browse our premium selection of wines, spirits, and gourmet products
+                Browse our premium selection of computers, gadgets, and accessories
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/portfolio/liquor/shop/cart">
-                <Button variant="secondary" className="bg-white text-red-800 hover:bg-white/90">
+              <Link href="/portfolio/tech-store/shop/cart">
+                <Button variant="secondary" className="bg-white text-green-800 hover:bg-white/90">
                   <ShoppingBag className="mr-2 h-4 w-4" />
                   View Cart
                 </Button>
@@ -72,7 +72,7 @@ export default async function ShopPage({
                 </SheetTrigger>
                 <SheetContent side="left" className="w-[300px] sm:hidden">
                   <div className="py-4">
-                    <ProductFilters categories={categories} />
+                    <TechProductFilters categories={categories} />
                   </div>
                 </SheetContent>
               </Sheet>
@@ -89,7 +89,7 @@ export default async function ShopPage({
             <div className="hidden sm:block w-full md:w-64 shrink-0">
               <div className="sticky top-20">
                 <h2 className="text-xl font-bold mb-4">Filters</h2>
-                <ProductFilters categories={categories} />
+                <TechProductFilters categories={categories} />
               </div>
             </div>
 
@@ -103,10 +103,7 @@ export default async function ShopPage({
               {allProducts.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {allProducts.map((product) => (
-                    <ProductCard
-                      key={product.id}
-                      product={{ ...product, stock: product.stock ?? 0 }}
-                    />
+                    <TechProductCard key={product.id} product={{ ...product, stock: product.stock ?? 0 }} />
                   ))}
                 </div>
               ) : (
@@ -124,4 +121,3 @@ export default async function ShopPage({
     </main>
   )
 }
-

@@ -7,7 +7,37 @@ import Link from "next/link"
 
 export default async function CartPage() {
   const cart = await getCart()
+  // Check if the cart is empty
+  // If the cart is empty, show a message to the user
+  // If the cart is not empty, show the cart items and summary
+
   const isEmpty = cart.length === 0
+
+  const cartItems = cart.map((item) => ({
+    id: item.productId,
+    name: item.product,
+    price: 100,
+    quantity: item.quantity,
+    imageUrl: "",
+  }))
+  const cartTotal = cart.reduce((total, item) => total + 10 * item.quantity, 0)
+  const cartSummary = {
+    items: cartItems,
+    total: cartTotal,
+  }
+  const cartCount = cart.reduce((count, item) => count + item.quantity, 0)
+  const cartId = cart[0]?.productId || "cart-12345" // Replace with actual cart ID logic
+  const cartData = {
+    id: cartId,
+    items: cartItems,
+    total: cartTotal,
+    count: cartCount,
+  }
+  // Check if the cart is empty
+  // If the cart is empty, show a message to the user
+  // If the cart is not empty, show the cart items and summary
+  // const isEmpty = cart.length === 0
+  // const cartItems = cart.map((item) => ({
 
   return (
     <main className="flex-1">

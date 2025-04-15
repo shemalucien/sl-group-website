@@ -9,8 +9,7 @@ export const subsidiaries = pgTable("subsidiaries", {
   name: varchar("name", { length: 100 }).notNull(),
   slug: varchar("slug", { length: 100 }).notNull().unique(),
   tagline: varchar("tagline", { length: 255 }),
-  description: text("description"),
-  // Add missing fields that are in your seed data
+  description: text("description"),  
   mission: text("mission"),
   objective: text("objective"),
   iconName: varchar("icon_name", { length: 50 }),
@@ -143,23 +142,6 @@ export const sessions = pgTable("sessions", {
   expiresAt: timestamp("expires_at").notNull(),
 })
 
-// // Blog posts
-// export const blogPosts = pgTable("blog_posts", {
-//   id: serial("id").primaryKey(),
-//   title: varchar("title", { length: 255 }).notNull(),
-//   slug: varchar("slug", { length: 255 }).notNull().unique(),
-//   content: text("content").notNull(),
-//   excerpt: text("excerpt"),
-//   featuredImageUrl: varchar("featured_image_url", { length: 255 }),
-//   authorId: integer("author_id")
-//     .notNull()
-//     .references(() => users.id),
-//   subsidiaryId: integer("subsidiary_id").references(() => subsidiaries.id),
-//   isPublished: boolean("is_published").default(false),
-//   publishedAt: timestamp("published_at"),
-//   createdAt: timestamp("created_at").defaultNow(),
-//   updatedAt: timestamp("updated_at").defaultNow(),
-// })
 
 // Blog posts
 export const blogPosts = pgTable("blog_posts", {
@@ -227,7 +209,6 @@ export const blogComments = pgTable("blog_comments", {
 })
 
 // add blog post relations
-// Add blog post relations
 export const blogPostRelations = relations(blogPosts, ({ one, many }) => ({
   author: one(users, {
     fields: [blogPosts.authorId],
@@ -277,24 +258,6 @@ export const blogCommentRelations = relations(blogComments, ({ one }) => ({
   }),
 }));
 
-
-
-
-// // Job listings
-// export const jobListings = pgTable("job_listings", {
-//   id: serial("id").primaryKey(),
-//   title: varchar("title", { length: 255 }).notNull(),
-//   description: text("description").notNull(),
-//   requirements: text("requirements"),
-//   location: varchar("location", { length: 100 }),
-//   type: varchar("type", { length: 50 }), // full-time, part-time, contract
-//   subsidiaryId: integer("subsidiary_id")
-//     .notNull()
-//     .references(() => subsidiaries.id),
-//   isActive: boolean("is_active").default(true),
-//   createdAt: timestamp("created_at").defaultNow(),
-//   updatedAt: timestamp("updated_at").defaultNow(),
-// })
 
 // Job listings
 export const jobListings = pgTable("job_listings", {
@@ -356,9 +319,12 @@ export const products = pgTable("products", {
   category: varchar("category", { length: 100 }), // wine, spirits, beer, etc.
   stock: integer("stock").default(0),
   isActive: boolean("is_active").default(true),
+  subsidiaryId: integer("subsidiaryId"), // Added subsidiaryId column
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 })
+
+
 
 // Appointments for Liquor & Market
 export const appointments = pgTable("appointments", {
@@ -373,19 +339,26 @@ export const appointments = pgTable("appointments", {
   updatedAt: timestamp("updated_at").defaultNow(),
 })
 
-// Orders for Liquor & Market
+
 export const orders = pgTable("orders", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id")
-    .notNull()
-    .references(() => users.id),
+  userId: integer("user_id").notNull(),
   status: varchar("status", { length: 50 }).default("pending"), // pending, processing, shipped, delivered, cancelled
-  total: integer("total").notNull(), // stored in cents
-  shippingAddress: json("shipping_address"),
+  total: integer("total").notNull(),
+  subtotal: integer("subtotal").notNull(),
+  tax: integer("tax").notNull(),
+  shipping: integer("shipping").notNull(),
+  shippingAddress: text("shipping_address").notNull(),
+  billingAddress: text("billing_address").notNull(),
+  paymentMethod: text("payment_method").notNull(),
   paymentIntentId: varchar("payment_intent_id", { length: 255 }),
+  items: text("items").notNull(),
+  storeType: text("store_type").notNull(),
+  notes: text("notes"),
+  subsidiaryId: integer("subsidiaryId"), // Added subsidiaryId column
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
-})
+});
 
 // Order items
 export const orderItems = pgTable("order_items", {
@@ -433,6 +406,8 @@ export const notifications = pgTable("notifications", {
   userId: integer("user_id").references(() => users.id),
   title: varchar("title", { length: 255 }).notNull(),
   message: text("message").notNull(),
+  link: text("link"), // Added link field
+  metadata: json("metadata"),
   type: varchar("type", { length: 50 }).notNull(), // order, appointment, message, system
   read: boolean("read").default(false),
   relatedId: integer("related_id"), // ID of related entity (order, appointment, etc.)
@@ -498,6 +473,36 @@ export const payments = pgTable("payments", {
   metadata: json("metadata"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+})
+
+// add inventory table
+export const inventory = pgTable("inventory", {
+  id: serial("id").primaryKey(),
+  productId: integer("product_id").references(() => products.id),
+  quantity: integer("quantity").notNull(),
+  reorderLevel: integer("reorder_level").default(0),
+  reorderQuantity: integer("reorder_quantity").default(0),
+  location: varchar("location", { length: 100 }),
+  lastUpdated: timestamp("last_updated").defaultNow(),
+})
+
+// inventory relations
+export const inventoryRelations = relations(inventory, ({ one }) => ({
+  product: one(products, {
+    fields: [inventory.productId],
+    references: [products.id],
+  }),
+}))
+
+// Inventory transactions 
+
+export const inventoryTransactions = pgTable("inventory_transactions", {
+  id: serial("id").primaryKey(),
+  productId: integer("product_id").references(() => products.id),
+  quantity: integer("quantity").notNull(),
+  transactionType: varchar("transaction_type", { length: 50 }).notNull(), // addition, subtraction
+  reason: text("reason"),
+  createdAt: timestamp("created_at").defaultNow(),
 })
 
 // Define relations
