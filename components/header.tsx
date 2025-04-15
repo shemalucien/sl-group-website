@@ -402,17 +402,19 @@ export default function Header() {
                   {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.email}
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                {user.role != "admin" && (
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard">Dashboard</Link>
                 </DropdownMenuItem>
+                )}
+                {user.role === "admin" && (
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin">Dashboard</Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/profile">Profile</Link>
                 </DropdownMenuItem>
-                {user.role === "admin" && (
-                  <DropdownMenuItem asChild>
-                    <Link href="/admin">Admin Dashboard</Link>
-                  </DropdownMenuItem>
-                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>Sign Out</DropdownMenuItem>
               </DropdownMenuContent>

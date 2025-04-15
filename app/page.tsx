@@ -268,6 +268,7 @@ import { SocialFeed } from "@/components/social-feed";
 import { JobListingCard } from "@/components/job-listing-card";
 import { TeamSection } from "@/components/team-section"
 import { Suspense } from "react";
+import { FAQSection } from "@/components/faq-section";
 
 
 export default async function HomePage() {
@@ -598,6 +599,9 @@ export default async function HomePage() {
           </div>
         </section>
 
+         {/* FAQ Section - NEW */}
+         <FAQSection />
+         
         {/* CTA Section */}
         <section className="w-full py-12 md:py-24 lg:py-32 bg-primary text-primary-foreground">
           <div className="container px-4 md:px-6">

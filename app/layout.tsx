@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/toaster"
 import Script from "next/script"
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt"
 import ConditionalFooter from "@/components/conditional--footer"
+import { ChatWidget } from '@/components/chat/chat-widget'
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -60,6 +61,7 @@ export default function RootLayout({
             <ConditionalFooter />
           </div>
           <Toaster />
+          <ChatWidget />
           <PWAInstallPrompt />
         </ThemeProvider>
         <Script src="/pwa.js" strategy="lazyOnload" />

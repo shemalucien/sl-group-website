@@ -390,7 +390,10 @@ works well with integration
 */
 export default async function PortfolioPage() {
   const subsidiaries = await getSubsidiaries();
-const activeSubsidiaries = subsidiaries.filter((sub) => sub.isActive)
+// const activeSubsidiaries = subsidiaries.filter((sub) => sub.isActive)
+const activeSubsidiaries = subsidiaries.filter(
+  (sub) => sub.isActive && (sub.slug === "tech" || sub.slug === "liquor" || sub.slug === "tech-solutions")
+);
 
   // Define the order of sections if needed
   const sectionOrder = ['tech', 'events', 'properties', 'grooming', 'stationery', 'liquor'];
