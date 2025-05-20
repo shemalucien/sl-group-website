@@ -1,5 +1,5 @@
 import { db } from "@/db"
-import { users, products, orders, blogPosts, jobListings, appointments, notifications, employees, teamMembers } from "@/db/schema"
+import { users, products, orders, blogPosts, jobListings, appointments, notifications, employees, teamMembers,contactSubmissions } from "@/db/schema"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Overview } from "@/components/admin/overview"
@@ -9,6 +9,7 @@ import { NotificationsPanel } from "@/components/admin/notifications-panel"
 import { count, eq } from "drizzle-orm"
 import { Users, ShoppingBag, ShoppingCart, FileText, Briefcase, Calendar, Bell } from "lucide-react"
 import { getCurrentUser } from "@/lib/auth"
+import Link from "next/link"
 
 export default async function AdminDashboard() {
   const currentUser = await getCurrentUser()
@@ -28,6 +29,7 @@ export default async function AdminDashboard() {
     notificationCount,
     employeeCount,
     teamMemberCount,
+    contactSubmissionCount,
   ] = await Promise.all([
     db
       .select({ count: count() })
@@ -66,6 +68,10 @@ export default async function AdminDashboard() {
       .select({ count: count() })
       .from(teamMembers)
       .then((res) => res[0].count),
+    db
+      .select({ count: count() })
+      .from(contactSubmissions)
+      .then((res) => res[0].count),
   ])
 
   // Get recent orders
@@ -103,6 +109,18 @@ export default async function AdminDashboard() {
       ...notification,
       createdAt: notification.createdAt ?? new Date(), // Replace null with current date
       read: notification.read ?? false, // Replace null with false
+    }))
+
+  // Get Contact Submissions
+  const unreadcontactSubmissions = (await db.query.contactSubmissions.findMany({
+    orderBy: (contactSubmissions, { desc }) => [desc(contactSubmissions.createdAt)],
+    limit: 5,
+  }))
+    .filter(submission => submission.createdAt !== null)
+    .map(submission => ({
+      ...submission,
+      createdAt: submission.createdAt ?? new Date(), // Replace null with current date
+      isRead: submission.isRead ?? false, // Replace null with false
     }))
     
 
@@ -193,6 +211,20 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{notificationCount}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Contact Submissions</CardTitle>
+
+            <Link href="/admin/contactsubmissions" className="text-sm text-blue-500 hover:underline">
+              View All
+            </Link>
+            
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{contactSubmissionCount}</div>
           </CardContent>
         </Card>
       </div>

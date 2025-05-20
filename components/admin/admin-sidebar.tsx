@@ -120,6 +120,7 @@ const sidebarItems = [
   { title: "Reports", href: "/admin/reports", icon: BarChart },
   { title: "Media Library", href: "/admin/media", icon: Image },
   { title: "Notifications", href: "/admin/notifications", icon: Bell },
+  { title: "Contact Submissions", href: "/admin/contactsubmissions", icon: FileText },
   { title: "Settings", href: "/admin/settings", icon: Settings },
 ]
 

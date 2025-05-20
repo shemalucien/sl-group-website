@@ -73,7 +73,7 @@ export function CheckoutForm({ user, storeType = "liquor" }: CheckoutFormProps) 
         await clearCart()
 
         // Redirect to order confirmation
-        router.push(`/portfolio/${storeType}/shop/order-confirmation/${order.id}`)
+        router.push(`/portfolio/${storeType}/order-confirmation/${order.id}`)
       } else {
         throw new Error("Failed to create order")
       }
